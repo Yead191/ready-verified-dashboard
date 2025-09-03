@@ -1,9 +1,11 @@
+
 import { Users, DollarSign, FileText, Crown, Layout } from "lucide-react";
+
 
 export const metricsData = [
   {
     title: "Total User",
-    value: "11,876",
+    value: "1100",
     growth: "+6.5%",
     period: "Since last week",
     icon: Users,

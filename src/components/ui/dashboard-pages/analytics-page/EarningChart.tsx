@@ -12,6 +12,8 @@ import {
 } from "recharts";
 import { YearSelector } from "./YearSelector";
 import { earningData } from "@/data/chartData";
+import { useState } from "react";
+import { useGetAnalyticsQuery } from "@/redux/feature/analyticsApi/analyticsApi";
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
@@ -21,22 +23,8 @@ const CustomTooltip = ({ active, payload, label }: any) => {
         <p className="font-semibold text-gray-900 mb-2">{`${label} 2020`}</p>
         <div className="space-y-1">
           <div className="flex items-center justify-between gap-4">
-            <span className="text-sm text-gray-600">Revenue:</span>
-            <span className="text-sm font-medium">{data.revenue}</span>
-          </div>
-          <div className="flex items-center justify-between gap-4">
-            <span className="text-sm text-gray-600">Index Value:</span>
-            <span className="text-sm font-medium">{data.value}</span>
-          </div>
-          <div className="flex items-center justify-between gap-4">
-            <span className="text-sm text-gray-600">Growth:</span>
-            <span
-              className={`text-sm font-medium ${
-                data.growth.startsWith("+") ? "text-green-600" : "text-red-600"
-              }`}
-            >
-              {data.growth}
-            </span>
+            <span className="text-sm text-gray-600">Total Earning:</span>
+            <span className="text-sm font-medium">{data.totalEarning}</span>
           </div>
         </div>
       </div>
@@ -46,11 +34,17 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 export function EarningChart() {
+  const [year, setYear] = useState("2025");
+
+  // console.log(year);
+  const { data: analyticsData } = useGetAnalyticsQuery({ year });
+  const earningData = analyticsData?.data?.earningsData || [];
+  console.log(earningData);
   return (
     <div className="bg-white shadow-sm mt-4 p-6 rounded-lg">
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-lg font-semibold text-gray-900">Earning</h2>
-        <YearSelector defaultValue="2025" />
+        <YearSelector defaultValue="2025" setYear={setYear} />
       </div>
 
       <div className="h-56">
@@ -81,7 +75,7 @@ export function EarningChart() {
             />
             <Line
               type="monotone"
-              dataKey="value"
+              dataKey="totalEarning"
               stroke="#60a5fa"
               strokeWidth={2}
               dot={{ fill: "#60a5fa", strokeWidth: 2, r: 3 }}

@@ -6,19 +6,24 @@ import { mockUsers, User } from "@/data/mockUsers";
 import UserDetailsModal from "./UserDetailsModal";
 import { toast } from "sonner";
 import { Lock, Unlock } from "lucide-react";
+import { useGetUsersQuery } from "@/redux/feature/users/usersApi";
 
 // Define the User interface
 
 export default function UsersPageMain() {
-  const [users, setUsers] = useState<User[]>(mockUsers);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [activeTab, setActiveTab] = useState<"candidates" | "employee">(
-    "candidates"
+  const [activeTab, setActiveTab] = useState<"CANDIDATE" | "EMPLOYEE">(
+    "CANDIDATE"
   );
+  console.log(activeTab);
+  const { data: usersData } = useGetUsersQuery({
+    role: activeTab,
+  });
+  console.log(usersData);
 
-  const handleViewDetails = (user: User) => {
-    setSelectedUser(user);
+  const handleViewDetails = (user: any) => {
+    setSelectedUser(user._id);
     setIsModalVisible(true);
   };
 
@@ -30,8 +35,8 @@ export default function UsersPageMain() {
   const columns = [
     {
       title: "S.No",
-      dataIndex: "id",
-      key: "id",
+      key: "index",
+      render: (_: any, __: any, index: number) => index + 1,
       className: "px-6 py-4 whitespace-nowrap text-sm text-gray-900",
     },
     {
@@ -42,7 +47,7 @@ export default function UsersPageMain() {
       render: (text: string, record: User) => (
         <div className="flex items-center gap-3">
           <img
-            src={record.avatar || "/placeholder.svg"}
+            src={record?.image || "/placeholder.svg"}
             alt={text}
             className="w-8 h-8 rounded-full object-cover"
           />
@@ -61,15 +66,15 @@ export default function UsersPageMain() {
       dataIndex: "subscription",
       key: "subscription",
       className: "px-6 py-4 whitespace-nowrap",
-      render: (subscription: string) => (
+      render: (subscription: any) => (
         <span
           className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-            subscription === "Free"
+            subscription === "Basic Package"
               ? "bg-gray-100 text-gray-800"
               : "bg-blue-100 text-blue-800"
           }`}
         >
-          {subscription}
+          {subscription && subscription}
         </span>
       ),
     },
@@ -81,16 +86,18 @@ export default function UsersPageMain() {
     },
     {
       title: "Status",
-      dataIndex: "isLocked",
+      dataIndex: "status",
       key: "status",
       className: "px-6 py-4 whitespace-nowrap",
-      render: (isLocked: boolean) => (
+      render: (status: any) => (
         <span
           className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-            isLocked ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"
+            status === "active"
+              ? "bg-green-100 text-green-800"
+              : "bg-red-100 text-red-800"
           }`}
         >
-          {isLocked ? "Locked" : "Active"}
+          {status}
         </span>
       ),
     },
@@ -133,9 +140,9 @@ export default function UsersPageMain() {
             title={record.isLocked ? "Unlock User" : "Lock User"}
             icon={
               record.isLocked ? (
-              <Lock size={16} color="red"/>
+                <Lock size={16} color="red" />
               ) : (
-               <Unlock size={16} />
+                <Unlock size={16} />
               )
             }
           />
@@ -150,31 +157,31 @@ export default function UsersPageMain() {
       <div className=" mb-2 w-full max-w-lg">
         <div className="flex  items-center rounded-lg py-[6px]  gap-4 ">
           <button
-            onClick={() => setActiveTab("candidates")}
+            onClick={() => setActiveTab("CANDIDATE")}
             className={`flex-1 text-sm  px-3 py-2 rounded-[8px] transition ${
-              activeTab === "candidates"
+              activeTab === "CANDIDATE"
                 ? "bg-[#1A5FA4]  text-white font-medium"
                 : "text-neutral-500 hover:text-neutral-800 border border-[#ABABAB]"
             }`}
           >
-            Candidates
+            CANDIDATE
           </button>
           <button
-            onClick={() => setActiveTab("employee")}
+            onClick={() => setActiveTab("EMPLOYEE")}
             className={`flex-1 text-sm  px-3 py-2 rounded-[8px] transition ${
-              activeTab === "employee"
+              activeTab === "EMPLOYEE"
                 ? "bg-[#1A5FA4]  text-white font-medium"
                 : "text-neutral-500 hover:text-neutral-800 border border-[#ABABAB]"
             }`}
           >
-            Employee
+            EMPLOYEE
           </button>
         </div>
       </div>
       <Table
-        dataSource={users}
+        dataSource={usersData?.data}
         columns={columns}
-        rowKey="id"
+        rowKey="_id"
         className="min-w-full"
         rowClassName="hover:bg-gray-50"
         scroll={{ x: true }}
@@ -185,7 +192,7 @@ export default function UsersPageMain() {
         }}
       />
       <UserDetailsModal
-        user={selectedUser}
+        userId={selectedUser}
         visible={isModalVisible}
         onClose={() => {
           setIsModalVisible(false);

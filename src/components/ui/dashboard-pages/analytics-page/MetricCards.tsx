@@ -1,7 +1,61 @@
-import { metricsData } from "@/data/metricsData";
+"use client";
+// import { metricsData } from "@/data/metricsData";
 import { Card } from "antd";
+import { Users, DollarSign, FileText, Crown, Layout } from "lucide-react";
+import { useGetAnalyticsQuery } from "@/redux/feature/analyticsApi/analyticsApi";
 
 export function MetricCards() {
+  const { data: analyticsData } = useGetAnalyticsQuery({});
+  console.log(analyticsData);
+  const summary = analyticsData?.data?.summury;
+  const metricsData = [
+    {
+      title: "Total User",
+      value: summary?.totalUsers,
+      growth: "+6.5%",
+      period: "Since last week",
+      icon: Users,
+      iconBg: "bg-purple-100",
+      iconColor: "text-purple-600",
+    },
+    {
+      title: "Total Earning",
+      value: summary?.totalEarning,
+      growth: "+6.5%",
+      period: "Since last week",
+      icon: DollarSign,
+      iconBg: "bg-pink-100",
+      iconColor: "text-pink-600",
+    },
+    {
+      title: "Total Assessments",
+      value: summary?.totalAssessment,
+      growth: "+6.5%",
+      period: "Since last week",
+      icon: FileText,
+      iconBg: "bg-blue-100",
+      iconColor: "text-blue-600",
+    },
+    {
+      title: "Total Subscriptions",
+      value: summary?.totalSubscription,
+      growth: "+6.5%",
+      period: "Since last week",
+      icon: Crown,
+      iconBg: "bg-orange-100",
+      iconColor: "text-orange-600",
+    },
+    {
+      title: "Total Templates",
+      value: summary?.totalTemplates,
+      growth: "+8.9%",
+      period: "Since last week",
+      icon: Layout,
+      iconBg: "bg-teal-100",
+      iconColor: "text-teal-600",
+    },
+  ];
+
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
       {metricsData.map((metric, index) => (
@@ -31,10 +85,6 @@ export function MetricCards() {
                 <p className="text-sm text-gray-500">{metric.title}</p>
               </div>
             </div>
-          </div>
-          <div className="mt-2 flex items-center text-xs">
-            <span className="font-medium text-green-600">{metric.growth}</span>
-            <span className="ml-1 text-gray-500">{metric.period}</span>
           </div>
         </Card>
       ))}

@@ -11,14 +11,15 @@ import {
   Tooltip,
 } from "recharts";
 import { YearSelector } from "./YearSelector";
-import { userData } from "@/data/chartData";
+import { useState } from "react";
+import { useGetAnalyticsQuery } from "@/redux/feature/analyticsApi/analyticsApi";
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+const CustomTooltip = ({ active, payload, label, year }: any) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
     return (
       <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
-        <p className="font-semibold text-gray-900 mb-2">{`${label} 2025`}</p>
+        <p className="font-semibold text-gray-900 mb-2">{`${label} ${year}`}</p>
         <div className="space-y-1">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-2">
@@ -26,7 +27,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
               <span className="text-sm text-gray-600">Candidate:</span>
             </div>
             <span className="text-sm font-medium">
-              {data.Candidate.toLocaleString()}
+              {data?.candidates?.toLocaleString()}
             </span>
           </div>
           <div className="flex items-center justify-between gap-4">
@@ -35,18 +36,8 @@ const CustomTooltip = ({ active, payload, label }: any) => {
               <span className="text-sm text-gray-600">Employee:</span>
             </div>
             <span className="text-sm font-medium">
-              {data.Employee.toLocaleString()}
+              {data?.employees?.toLocaleString()}
             </span>
-          </div>
-          <div className="border-t pt-1 mt-2">
-            <div className="flex items-center justify-between gap-4">
-              <span className="text-sm font-semibold text-gray-700">
-                Total:
-              </span>
-              <span className="text-sm font-semibold">
-                {data.total.toLocaleString()}
-              </span>
-            </div>
           </div>
         </div>
       </div>
@@ -56,11 +47,18 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 export function UserGroupChart() {
+  const [year, setYear] = useState("2025");
+
+  // console.log(year);
+  const { data: analyticsData } = useGetAnalyticsQuery({ year });
+  const userData = analyticsData?.data?.users || [];
+  // console.log(userData);
+
   return (
     <div className="bg-white shadow-sm rounded-lg p-6 mt-4">
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-lg font-semibold text-gray-900">User Group</h2>
-        <YearSelector defaultValue="2025" />
+        <YearSelector defaultValue="2025" setYear={setYear} />
       </div>
 
       <div className="h-56">
@@ -80,24 +78,24 @@ export function UserGroupChart() {
               axisLine={false}
               tickLine={false}
               tick={{ fontSize: 12, fill: "#6b7280" }}
-              tickFormatter={(value: any) => `${value / 1000}k`}
+              tickFormatter={(value: any) => `${value}`}
             />
             <Tooltip
-              content={<CustomTooltip />}
+              content={<CustomTooltip year={year} />}
               cursor={{ fill: "rgba(59, 130, 246, 0.1)" }}
             />
             <Legend wrapperStyle={{ paddingTop: "20px" }} iconType="circle" />
             <Bar
-              dataKey="Candidate"
+              dataKey="candidates"
               fill="#60a5fa"
               radius={[2, 2, 0, 0]}
-              name="Candidate"
+              name="candidates"
             />
             <Bar
-              dataKey="Employee"
+              dataKey="employees"
               fill="#fb923c"
               radius={[2, 2, 0, 0]}
-              name="Employee"
+              name="employees"
             />
           </BarChart>
         </ResponsiveContainer>

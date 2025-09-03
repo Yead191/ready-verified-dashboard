@@ -5,11 +5,13 @@ import { ChevronDown } from "lucide-react";
 
 interface YearSelectorProps {
   defaultValue: string;
+  setYear?: any;
 }
 
-export function YearSelector({ defaultValue }: YearSelectorProps) {
+export function YearSelector({ defaultValue, setYear }: YearSelectorProps) {
   return (
     <Select
+      onChange={(value) => setYear(value)}
       defaultValue={defaultValue}
       className="w-20"
       variant="borderless"
