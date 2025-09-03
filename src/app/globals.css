@@ -60,7 +60,34 @@ body {
 .text-primary {
   color: #1a5fa4 !important;
 }
+.bg-primary {
+  background-color: #1a5fa4 !important;
+  color: #ffffff !important;
+}
 
 .ant-menu-sub {
   background: transparent !important;
+}
+
+/* scroll bar */
+::-webkit-scrollbar {
+  width: 2px;
+  height: 2px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  /* background: #6b5ecc34;  */
+  background: white;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #0f2535;
 }

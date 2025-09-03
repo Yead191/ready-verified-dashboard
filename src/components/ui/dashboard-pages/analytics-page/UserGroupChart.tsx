@@ -1,7 +1,5 @@
 "use client";
 
-import { Card } from "antd";
-
 import {
   BarChart,
   Bar,

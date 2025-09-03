@@ -1,6 +1,5 @@
 "use client";
 
-import { Card } from "antd";
 import {
   LineChart,
   Line,

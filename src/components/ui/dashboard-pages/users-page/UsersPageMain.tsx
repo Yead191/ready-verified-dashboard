@@ -1,0 +1,197 @@
+"use client";
+
+import { useState } from "react";
+import { Table, Button } from "antd";
+import { mockUsers, User } from "@/data/mockUsers";
+import UserDetailsModal from "./UserDetailsModal";
+import { toast } from "sonner";
+import { Lock, Unlock } from "lucide-react";
+
+// Define the User interface
+
+export default function UsersPageMain() {
+  const [users, setUsers] = useState<User[]>(mockUsers);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [activeTab, setActiveTab] = useState<"candidates" | "employee">(
+    "candidates"
+  );
+
+  const handleViewDetails = (user: User) => {
+    setSelectedUser(user);
+    setIsModalVisible(true);
+  };
+
+  const handleLockToggle = (userId: number) => {
+    toast.success("User locked successfully!");
+  };
+
+  // Define AntD Table columns
+  const columns = [
+    {
+      title: "S.No",
+      dataIndex: "id",
+      key: "id",
+      className: "px-6 py-4 whitespace-nowrap text-sm text-gray-900",
+    },
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+      className: "px-6 py-4 whitespace-nowrap",
+      render: (text: string, record: User) => (
+        <div className="flex items-center gap-3">
+          <img
+            src={record.avatar || "/placeholder.svg"}
+            alt={text}
+            className="w-8 h-8 rounded-full object-cover"
+          />
+          <span className="font-medium text-gray-900">{text}</span>
+        </div>
+      ),
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+      className: "px-6 py-4 whitespace-nowrap text-sm text-gray-900",
+    },
+    {
+      title: "Subscription",
+      dataIndex: "subscription",
+      key: "subscription",
+      className: "px-6 py-4 whitespace-nowrap",
+      render: (subscription: string) => (
+        <span
+          className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+            subscription === "Free"
+              ? "bg-gray-100 text-gray-800"
+              : "bg-blue-100 text-blue-800"
+          }`}
+        >
+          {subscription}
+        </span>
+      ),
+    },
+    {
+      title: "Contact",
+      dataIndex: "contact",
+      key: "contact",
+      className: "px-6 py-4 whitespace-nowrap text-sm text-gray-900",
+    },
+    {
+      title: "Status",
+      dataIndex: "isLocked",
+      key: "status",
+      className: "px-6 py-4 whitespace-nowrap",
+      render: (isLocked: boolean) => (
+        <span
+          className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+            isLocked ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"
+          }`}
+        >
+          {isLocked ? "Locked" : "Active"}
+        </span>
+      ),
+    },
+    {
+      title: "Action",
+      key: "action",
+      className:
+        "px-6 py-4 whitespace-nowrap text-sm font-medium flex justify-center",
+      render: (_: any, record: User) => (
+        <div className="flex gap-2 justify-end">
+          <Button
+            type="text"
+            onClick={() => handleViewDetails(record)}
+            className="text-blue-600 hover:text-blue-900 p-1 rounded"
+            title="View Details"
+            icon={
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            }
+          />
+          <Button
+            type="text"
+            onClick={() => handleLockToggle(record.id)}
+            className={`p-1 rounded ${
+              record.isLocked
+                ? "text-green-600 hover:text-green-900"
+                : "text-red-600 hover:text-red-900"
+            }`}
+            title={record.isLocked ? "Unlock User" : "Lock User"}
+            icon={
+              record.isLocked ? (
+              <Lock size={16} color="red"/>
+              ) : (
+               <Unlock size={16} />
+              )
+            }
+          />
+        </div>
+      ),
+    },
+  ];
+
+  return (
+    <div className=" rounded-lg overflow-hidden">
+      {/* Custom Tabs */}
+      <div className=" mb-2 w-full max-w-lg">
+        <div className="flex  items-center rounded-lg py-[6px]  gap-4 ">
+          <button
+            onClick={() => setActiveTab("candidates")}
+            className={`flex-1 text-sm  px-3 py-2 rounded-[8px] transition ${
+              activeTab === "candidates"
+                ? "bg-[#1A5FA4]  text-white font-medium"
+                : "text-neutral-500 hover:text-neutral-800 border border-[#ABABAB]"
+            }`}
+          >
+            Candidates
+          </button>
+          <button
+            onClick={() => setActiveTab("employee")}
+            className={`flex-1 text-sm  px-3 py-2 rounded-[8px] transition ${
+              activeTab === "employee"
+                ? "bg-[#1A5FA4]  text-white font-medium"
+                : "text-neutral-500 hover:text-neutral-800 border border-[#ABABAB]"
+            }`}
+          >
+            Employee
+          </button>
+        </div>
+      </div>
+      <Table
+        dataSource={users}
+        columns={columns}
+        rowKey="id"
+        className="min-w-full"
+        rowClassName="hover:bg-gray-50"
+        scroll={{ x: true }}
+        pagination={{
+          pageSize: 9,
+          showSizeChanger: false,
+          hideOnSinglePage: true,
+        }}
+      />
+      <UserDetailsModal
+        user={selectedUser}
+        visible={isModalVisible}
+        onClose={() => {
+          setIsModalVisible(false);
+          setSelectedUser(null);
+        }}
+      />
+    </div>
+  );
+}

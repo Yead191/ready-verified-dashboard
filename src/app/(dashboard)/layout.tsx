@@ -8,11 +8,11 @@ export default function layout({ children }: { children: React.ReactNode }) {
       <aside>
         <DashboardSidebar />
       </aside>
-      <section className="bg-[#F1F4F9] flex-1  pl-2">
+      <section className="bg-[#F1F4F9] flex-1  pl-4">
         <nav className="sticky top-0 z-50 ">
           <DashboardHeader />
         </nav>
-        <section className="py-4 h-[calc(100vh-84px)] overflow-y-auto pl-2 pr-4">
+        <section className="py-4 h-[calc(100vh-84px)] overflow-y-auto  pr-4">
           {children}
         </section>
       </section>

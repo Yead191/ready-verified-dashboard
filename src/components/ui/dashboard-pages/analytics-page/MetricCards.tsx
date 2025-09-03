@@ -7,11 +7,14 @@ export function MetricCards() {
       {metricsData.map((metric, index) => (
         <Card
           key={index}
-          className="bg-white shadow-sm"
+          className="bg-white "
           styles={{
             body: {
               padding: "16px",
             },
+          }}
+          style={{
+            boxShadow: "3.53px 3.53px 18.54px 0 rgba(0,0,0,0.1)",
           }}
         >
           <div className="flex items-start justify-between">

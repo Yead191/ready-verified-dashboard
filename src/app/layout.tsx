@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Poppins } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
+import ReduxProvider from "@/redux/lib/ReduxProvider";
 
 // import { UserProvider } from "@/helpers/UserProvider";
 // import { AntdRegistry } from "@ant-design/nextjs-registry";
@@ -29,13 +30,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${poppins.variable} antialiased`}>
-        {/* <ReduxProvider> */}
-        <AntdRegistry>
-          {/* <UserProvider> */}
-          <Toaster position="top-center" duration={2000} />
-          {children}
-        </AntdRegistry>
-        {/* </ReduxProvider> */}
+        <ReduxProvider>
+          <AntdRegistry>
+            <Toaster position="top-center" duration={2000} />
+            {children}
+          </AntdRegistry>
+        </ReduxProvider>
       </body>
     </html>
   );
