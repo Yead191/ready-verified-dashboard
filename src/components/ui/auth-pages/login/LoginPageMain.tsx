@@ -12,6 +12,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import SocialLogin from "./SocialLogin";
+import { useLoginMutation } from "@/redux/feature/auth/authApi";
+import Cookies from "js-cookie";
 
 const { Title, Text } = Typography;
 
@@ -19,10 +21,26 @@ export default function LoginPageMain() {
   const { lg } = Grid.useBreakpoint();
   const [form] = Form.useForm();
   const router = useRouter();
+  const [login] = useLoginMutation();
   const onFinish = (values: any) => {
     console.log("Form values:", values);
-    toast.success("Login successful!");
-    router.push("/profile/home");
+    const user = {
+      email: values.email,
+      password: values.password,
+    };
+
+    toast.promise(login(user).unwrap(), {
+      loading: "Logging in...",
+      success: (res) => {
+        console.log(res);
+        toast.success("Login Success");
+        Cookies.set("accessToken", res?.data || "");
+        localStorage.removeItem("resetToken");
+        router.push("/analytics");
+        return <b>{res.message}</b>;
+      },
+      error: (res) => `Error: ${res.data?.message || "Something went wrong"}`,
+    });
   };
   return (
     <section className="">

@@ -4,11 +4,13 @@ import { Card, Row, Col, Typography, Select, Space, Badge, Avatar } from "antd";
 import { BellOutlined } from "@ant-design/icons";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { user } from "@/data/user";
+import { useGetProfileQuery } from "@/redux/feature/auth/authApi";
+// import { user } from "@/data/user";
 
 export default function DashboardHeader() {
-  const { Title, Text } = Typography;
+  const { Title } = Typography;
   const pathname = usePathname();
+  const { data: user } = useGetProfileQuery(null);
 
   const isLoading = false;
   const formatPathName = (slug: string | undefined) => {
@@ -88,7 +90,7 @@ export default function DashboardHeader() {
                   {user?.data?.name}
                 </span>
 
-                <p className="text-[12px] text-gray-400 -mt-1">
+                <p className="text-[10px] text-gray-400 -mt-1">
                   {user?.data?.role}
                 </p>
               </div>

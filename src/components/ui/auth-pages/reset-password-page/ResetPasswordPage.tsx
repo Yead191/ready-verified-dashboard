@@ -9,6 +9,7 @@ import {
   EyeTwoTone,
 } from "@ant-design/icons";
 import Cookies from "js-cookie";
+import { useResetPasswordMutation } from "@/redux/feature/auth/authApi";
 
 const { Title, Text } = Typography;
 
@@ -16,11 +17,20 @@ export default function ResetPasswordPage() {
   const { lg } = Grid.useBreakpoint();
   const [form] = Form.useForm();
   const router = useRouter();
-  const onFinish = (values: any) => {
-    console.log("update pass values:", values);
-    Cookies.remove("resetEmail");
-    toast.success("Password Reset Successfully!");
-    router.push("/auth/update-success");
+  const [resetPassword] = useResetPasswordMutation();
+  const onFinish = async (values: any) => {
+    // console.log(values);
+    toast.promise(resetPassword(values).unwrap(), {
+      loading: "Resetting password...",
+      success: (res) => {
+        // console.log(res);
+        router.push("/auth/login");
+        Cookies.remove("resetEmail");
+        Cookies.remove("resetToken");
+        return <b>{res.message}</b>;
+      },
+      error: (res) => `Error: ${res.data?.message || "Something went wrong"}`,
+    });
   };
   return (
     <section className="bg-white shadow-md  rounded-xl w-full max-w-[600px] px-8 py-12">

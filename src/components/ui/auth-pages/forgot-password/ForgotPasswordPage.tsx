@@ -5,6 +5,7 @@ import React from "react";
 import { toast } from "sonner";
 import { MailOutlined } from "@ant-design/icons";
 import Cookies from "js-cookie";
+import { useForgotPasswordMutation } from "@/redux/feature/auth/authApi";
 
 const { Title, Text } = Typography;
 
@@ -12,11 +13,27 @@ export default function ForgotPasswordPage() {
   const { lg } = Grid.useBreakpoint();
   const [form] = Form.useForm();
   const router = useRouter();
+
+  // api call
+  const [forgotPassword] = useForgotPasswordMutation();
+
   const onFinish = (values: any) => {
     console.log("Form values:", values);
     Cookies.set("resetEmail", values.email || "");
-    toast.success("A 4-digit OTP has been sent to your email!");
-    router.push("/auth/verify-otp");
+
+    toast.promise(forgotPassword(values).unwrap(), {
+      loading: "Sending OTP...",
+      success: (res) => {
+        console.log(res);
+        router.push("/auth/verify-otp");
+        return (
+          <b>{res.message || "A 4-digit OTP has been sent to your email!"}</b>
+        );
+      },
+      error: (res) => `Error: ${res.data?.message || "Something went wrong"}`,
+    });
+    // toast.success("A 4-digit OTP has been sent to your email!");
+    // router.push("/auth/verify-otp");
   };
   return (
     <section className="min-h-screen flex justify-center items-center">

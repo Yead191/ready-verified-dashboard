@@ -15,10 +15,14 @@ import Link from "next/link";
 
 const { Text } = Typography;
 import Cookies from "js-cookie";
+import {
+  useForgotPasswordMutation,
+  useVerifyOtpMutation,
+} from "@/redux/feature/auth/authApi";
 const VerifyOtp = () => {
   const router = useRouter();
-  //   const [forgotPassword] = useForgotPasswordMutation();
-  //   const [verifyOtp, { isLoading }] = useVerifyOtpMutation();
+  const [forgotPassword] = useForgotPasswordMutation();
+  const [verifyOtp, { isLoading }] = useVerifyOtpMutation();
   const onFinish = async (values: any) => {
     const email = Cookies.get("resetEmail") || "";
     const verificationData = {
@@ -26,19 +30,19 @@ const VerifyOtp = () => {
       oneTimeCode: parseInt(values.otp),
     };
     try {
-      //   toast.promise(verifyOtp(verificationData).unwrap(), {
-      //     loading: "Verifying code...",
-      //     success: (res) => {
-      //       // console.log(res.data);
-      //       Cookies.set("resetToken", res?.data || "", {
-      //         expires: 1,
-      //         path: "/",
-      //       });
-      //       router.push("/auth/reset-password");
-      //       return <b>{res.message}</b>;
-      //     },
-      //     error: (res) => `Error: ${res.data?.message || "Something went wrong"}`,
-      //   });
+      toast.promise(verifyOtp(verificationData).unwrap(), {
+        loading: "Verifying code...",
+        success: (res) => {
+          console.log(res.data);
+          Cookies.set("resetToken", res?.data || "", {
+            expires: 1,
+            path: "/",
+          });
+          router.push("/auth/reset-password");
+          return <b>{res.message}</b>;
+        },
+        error: (res) => `Error: ${res.data?.message || "Something went wrong"}`,
+      });
       router.push("/auth/reset-password");
     } catch (error) {
       toast.error("Failed to verify OTP");
@@ -46,16 +50,16 @@ const VerifyOtp = () => {
   };
 
   const handleResendOtp = () => {
-    // toast.promise(
-    //   forgotPassword({ email: Cookies.get("resetEmail") || "" }).unwrap(),
-    //   {
-    //     loading: "Resending OTP...",
-    //     success: (res) => {
-    //       return <b>{res.message}</b>;
-    //     },
-    //     error: (res) => `Error: ${res.data?.message || "Something went wrong"}`,
-    //   }
-    // );
+    toast.promise(
+      forgotPassword({ email: Cookies.get("resetEmail") || "" }).unwrap(),
+      {
+        loading: "Resending OTP...",
+        success: (res) => {
+          return <b>{res.message}</b>;
+        },
+        error: (res) => `Error: ${res.data?.message || "Something went wrong"}`,
+      }
+    );
   };
 
   return (
