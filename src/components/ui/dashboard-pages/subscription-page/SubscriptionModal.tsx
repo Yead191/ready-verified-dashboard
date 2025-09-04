@@ -56,7 +56,7 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
       onCancel={onCancel}
       footer={null}
       width={480}
-      destroyOnClose
+      destroyOnHidden
       centered
     >
       <Form
