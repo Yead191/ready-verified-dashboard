@@ -2,6 +2,8 @@ import DashboardHeader from "@/components/shared/dashboard-header/DashboardHeade
 import DashboardSidebar from "@/components/shared/dashboard-sidebar/DashboardSidebar";
 import React from "react";
 
+export const imgUrl = process.env.NEXT_PUBLIC_IMG_URL;
+
 export default function layout({ children }: { children: React.ReactNode }) {
   return (
     <main className="flex ">

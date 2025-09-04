@@ -18,13 +18,13 @@ export default function ForgotPasswordPage() {
   const [forgotPassword] = useForgotPasswordMutation();
 
   const onFinish = (values: any) => {
-    console.log("Form values:", values);
+    // console.log("Form values:", values);
     Cookies.set("resetEmail", values.email || "");
 
     toast.promise(forgotPassword(values).unwrap(), {
       loading: "Sending OTP...",
       success: (res) => {
-        console.log(res);
+        // console.log(res);
         router.push("/auth/verify-otp");
         return (
           <b>{res.message || "A 4-digit OTP has been sent to your email!"}</b>

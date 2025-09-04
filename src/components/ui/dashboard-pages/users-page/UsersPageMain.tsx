@@ -7,6 +7,7 @@ import UserDetailsModal from "./UserDetailsModal";
 import { toast } from "sonner";
 import { Lock, Unlock } from "lucide-react";
 import { useGetUsersQuery } from "@/redux/feature/users/usersApi";
+import { imgUrl } from "@/app/(dashboard)/layout";
 
 // Define the User interface
 
@@ -16,11 +17,11 @@ export default function UsersPageMain() {
   const [activeTab, setActiveTab] = useState<"CANDIDATE" | "EMPLOYEE">(
     "CANDIDATE"
   );
-  console.log(activeTab);
+  // console.log(activeTab);
   const { data: usersData } = useGetUsersQuery({
     role: activeTab,
   });
-  console.log(usersData);
+  // console.log(usersData);
 
   const handleViewDetails = (user: any) => {
     setSelectedUser(user._id);
@@ -47,7 +48,7 @@ export default function UsersPageMain() {
       render: (text: string, record: User) => (
         <div className="flex items-center gap-3">
           <img
-            src={record?.image || "/placeholder.svg"}
+            src={imgUrl + record?.image || "/placeholder.svg"}
             alt={text}
             className="w-8 h-8 rounded-full object-cover"
           />

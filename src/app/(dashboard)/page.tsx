@@ -9,7 +9,7 @@ import { toast } from "sonner";
 
 export default function Home() {
   const { data: userData, isLoading } = useGetProfileQuery(null);
-  console.log(userData);
+  // console.log(userData);
   const router = useRouter();
 
   if (isLoading) {

@@ -5,6 +5,7 @@ import { BellOutlined } from "@ant-design/icons";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useGetProfileQuery } from "@/redux/feature/auth/authApi";
+import { imgUrl } from "@/app/(dashboard)/layout";
 // import { user } from "@/data/user";
 
 export default function DashboardHeader() {
@@ -84,7 +85,7 @@ export default function DashboardHeader() {
             <div className="w-6 h-6 border-2 border-gray-300 border-t-black rounded-full animate-spin"></div>
           ) : (
             <>
-              <Avatar src={user?.data?.image} size={40} />
+              <Avatar src={imgUrl + user?.data?.image} size={40} />
               <div>
                 <span className="leading-6 font-semibold text-black">
                   {user?.data?.name}

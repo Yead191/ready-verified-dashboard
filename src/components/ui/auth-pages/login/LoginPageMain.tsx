@@ -23,7 +23,7 @@ export default function LoginPageMain() {
   const router = useRouter();
   const [login] = useLoginMutation();
   const onFinish = (values: any) => {
-    console.log("Form values:", values);
+    // console.log("Form values:", values);
     const user = {
       email: values.email,
       password: values.password,
@@ -32,8 +32,7 @@ export default function LoginPageMain() {
     toast.promise(login(user).unwrap(), {
       loading: "Logging in...",
       success: (res) => {
-        console.log(res);
-        toast.success("Login Success");
+        // console.log(res);
         Cookies.set("accessToken", res?.data || "");
         localStorage.removeItem("resetToken");
         router.push("/analytics");

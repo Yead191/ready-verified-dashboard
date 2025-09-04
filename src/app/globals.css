@@ -91,3 +91,45 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #0f2535;
 }
+
+.ant-form-item-label > label {
+  font-weight: 500;
+  color: #262626;
+}
+
+.ant-radio-wrapper {
+  align-items: flex-start !important;
+}
+
+.ant-card {
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  border: 1px solid #f0f0f0;
+}
+
+.ant-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12) !important;
+}
+
+.ant-btn-primary {
+  background: #1890ff;
+  border-color: #1890ff;
+}
+
+.ant-btn-primary:hover {
+  background: #40a9ff;
+  border-color: #40a9ff;
+}
+
+.ant-select-selector {
+  border-radius: 6px !important;
+}
+
+.ant-input {
+  border-radius: 6px !important;
+}
+
+.ant-form-item-explain-error {
+  font-size: 12px;
+}

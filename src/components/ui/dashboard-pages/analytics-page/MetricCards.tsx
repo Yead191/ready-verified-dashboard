@@ -6,7 +6,7 @@ import { useGetAnalyticsQuery } from "@/redux/feature/analyticsApi/analyticsApi"
 
 export function MetricCards() {
   const { data: analyticsData } = useGetAnalyticsQuery({});
-  console.log(analyticsData);
+  // console.log(analyticsData);
   const summary = analyticsData?.data?.summury;
   const metricsData = [
     {

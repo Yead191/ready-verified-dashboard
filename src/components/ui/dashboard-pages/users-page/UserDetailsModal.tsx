@@ -3,6 +3,7 @@
 import { Modal, Spin } from "antd";
 import { useGetSingleUserQuery } from "@/redux/feature/users/usersApi";
 import { Mail, Phone, Briefcase, Linkedin, Languages } from "lucide-react";
+import { imgUrl } from "@/app/(dashboard)/layout";
 
 interface UserDetailsModalProps {
   userId: any | null;
@@ -33,8 +34,9 @@ export default function UserDetailsModal({
 
   const user = data?.data;
   if (!user) return null;
+  console.log(user);
 
-  const prof = user.proffessional_details || {};
+  const prof = user?.proffessional_details || {};
 
   const infoItems = [
     { label: "Name", value: user.name },
@@ -95,7 +97,7 @@ export default function UserDetailsModal({
         {/* Profile Header */}
         <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
           <img
-            src={user.image || "/placeholder.svg"}
+            src={imgUrl + user.image || "/placeholder.svg"}
             alt={user.name}
             className="w-20 h-20 rounded-full object-cover border-2 border-white shadow-md"
           />

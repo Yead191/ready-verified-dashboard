@@ -89,7 +89,6 @@ export default function DashboardSidebar() {
           {/* Logout Button at Bottom */}
           <div className="p-2 mt-4">
             <Button
-              type="primary"
               danger
               block
               onClick={handleLogOut}
@@ -100,6 +99,7 @@ export default function DashboardSidebar() {
                 height: 40,
                 fontSize: 16,
                 fontWeight: 400,
+                // backgroundColor: "red",
               }}
             >
               <LogoutOutlined />

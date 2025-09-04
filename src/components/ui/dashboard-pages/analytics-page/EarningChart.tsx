@@ -39,7 +39,7 @@ export function EarningChart() {
   // console.log(year);
   const { data: analyticsData } = useGetAnalyticsQuery({ year });
   const earningData = analyticsData?.data?.earningsData || [];
-  console.log(earningData);
+  // console.log(earningData);
   return (
     <div className="bg-white shadow-sm mt-4 p-6 rounded-lg">
       <div className="mb-6 flex items-center justify-between">
