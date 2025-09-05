@@ -153,7 +153,7 @@ const ViewDetailsModal: React.FC<ViewDetailsModalProps> = ({
                       >
                         <div className="flex-1">
                           <div className="text-xs text-gray-500 mb-1">
-                            Q.{String(name + 1).padStart(2, "0")}
+                            Q.{" "} {String(name + 1).padStart(2, "0")}
                           </div>
                           <Form.Item
                             {...restField}
@@ -199,7 +199,7 @@ const ViewDetailsModal: React.FC<ViewDetailsModalProps> = ({
                     className="border border-gray-200 rounded p-2"
                   >
                     <span className="font-medium text-blue-600">
-                      Q.{String(i + 1).padStart(2, "0")}:
+                      Q. {" "}{String(i + 1).padStart(2, "0")}:
                     </span>{" "}
                     {q.question}
                   </div>

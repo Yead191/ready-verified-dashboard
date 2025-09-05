@@ -45,9 +45,9 @@ export const sidebarMenuItems = [
     label: "Categories",
   },
   {
-    key: "template",
+    key: "templates",
     icon: <Layout />,
-    label: "Template",
+    label: "Templates",
   },
   {
     key: "earning",

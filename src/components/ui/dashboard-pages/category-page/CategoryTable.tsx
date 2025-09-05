@@ -2,27 +2,51 @@
 
 import type React from "react";
 import { Table, Button, Space, Popconfirm, message } from "antd";
-import { EyeOutlined, DeleteOutlined } from "@ant-design/icons";
+import { EyeOutlined } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import { Category } from "@/data/assessment";
 import { imgUrl } from "@/app/(dashboard)/layout";
-import Image from "next/image";
+import { Trash } from "lucide-react";
+import { useState } from "react";
+import DeleteModal from "@/components/shared/DeleteModal";
+import { useDeleteCategoryMutation } from "@/redux/feature/categoryApi/categoryApi";
+import { toast } from "sonner";
 
 interface CategoryTableProps {
   categories: Category[];
   onView: (category: Category) => void;
-  onDelete: (categoryId: string) => void;
+  refetch: () => void;
 }
 
 const CategoryTable: React.FC<CategoryTableProps> = ({
   categories,
   onView,
-  onDelete,
+  refetch,
 }) => {
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleteCategory] = useDeleteCategoryMutation();
+
   const handleDelete = (categoryId: string) => {
-    onDelete(categoryId);
-    message.success("Category deleted successfully");
+    setDeleteId(categoryId);
+    setDeleteModalOpen(true);
   };
+
+  const handleDeleteCategory = () => {
+    if (deleteId) {
+      toast.promise(deleteCategory(deleteId).unwrap(), {
+        loading: "Deleting category...",
+        success: (res) => {
+          refetch();
+          setDeleteId(null);
+          setDeleteModalOpen(false);
+          return <b>{res.message}</b>;
+        },
+        error: (res) => `Error: ${res.data?.message || "Something went wrong"}`,
+      });
+    }
+  };
+  // console.log(deleteId);
 
   const columns: ColumnsType<Category> = [
     {
@@ -68,36 +92,37 @@ const CategoryTable: React.FC<CategoryTableProps> = ({
         <Space size="small">
           <Button
             type="text"
-            icon={<EyeOutlined />}
+            icon={<EyeOutlined style={{ fontSize: "20px" }} />}
             onClick={() => onView(record)}
             className="text-blue-600 hover:text-blue-800"
           />
-          <Popconfirm
-            title="Delete Category"
-            description="Are you sure you want to delete this category?"
-            onConfirm={() => handleDelete(record._id)}
-            okText="Yes"
-            cancelText="No"
-          >
-            <Button
-              type="text"
-              icon={<DeleteOutlined />}
-              className="text-red-600 hover:text-red-800"
-            />
-          </Popconfirm>
+
+          <Button
+            onClick={() => handleDelete(record._id)}
+            type="text"
+            icon={<Trash size={20} />}
+            className="text-red-600 hover:text-red-800"
+          />
         </Space>
       ),
     },
   ];
 
   return (
-    <Table
-      columns={columns}
-      dataSource={categories}
-      rowKey="_id"
-      pagination={false}
-      className="category-table"
-    />
+    <>
+      <Table
+        columns={columns}
+        dataSource={categories}
+        rowKey="_id"
+        pagination={false}
+        className="category-table"
+      />
+      <DeleteModal
+        isOpen={deleteModalOpen}
+        onCancel={() => setDeleteModalOpen(false)}
+        handleDelete={handleDeleteCategory}
+      />
+    </>
   );
 };
 

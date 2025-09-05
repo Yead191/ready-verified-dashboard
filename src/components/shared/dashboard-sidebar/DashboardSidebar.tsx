@@ -45,7 +45,7 @@ export default function DashboardSidebar() {
       <Sider width={280}>
         {/* Logo Section */}
         <Link href={"/analytics"}>
-          <div className="flex items-center justify-center h-[84px]  bg-white mb-2 rounded-b-lg">
+          <div className="flex items-center justify-center h-[84px]  bg-white mb-4 rounded-b-lg">
             <Image
               className="w-[57px] h-[60px] object-cover overflow-visible"
               src="/logo.png"
@@ -60,7 +60,7 @@ export default function DashboardSidebar() {
         {/* Main Menu */}
         <div
           style={{
-            height: "calc(100vh - 92px)",
+            height: "calc(100vh - 100px)",
             overflowY: "auto",
             display: "flex",
             flexDirection: "column",
