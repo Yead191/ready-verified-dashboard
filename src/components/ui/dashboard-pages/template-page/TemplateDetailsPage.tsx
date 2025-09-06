@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Card,
   Typography,
@@ -18,64 +18,30 @@ import {
   FileTextOutlined,
   DownloadOutlined,
 } from "@ant-design/icons";
-import { Template } from "@/data/template";
 import EditTemplateForm from "./EditTemplateForm";
-
+import {
+  useGetSingleTemplateQuery,
+  useUpdateTemplateMutation,
+} from "@/redux/feature/templateApi/templateApi";
+import { imgUrl } from "@/app/(dashboard)/layout";
+import { toast } from "sonner";
 
 const { Title } = Typography;
 
-// Mock data - in real app, this would come from API
-const mockTemplate: Template = {
-  id: "1",
-  name: "Professional Resume",
-  type: "CV",
-  date: "11/7/24",
-  status: "Active",
-  fileName: "professional-resume.pdf",
-  fileSize: "2.5 MB",
-  createdAt: new Date("2024-11-07"),
-  description:
-    "A professional resume template designed for corporate positions with clean layout and modern typography.",
-  tags: ["Professional", "Corporate", "Modern"],
-};
-
-export default function TemplateDetailsPage() {
+export default function TemplateDetailsPage({ id }: { id: string }) {
   const router = useRouter();
-  const params = useParams();
-  const [template, setTemplate] = useState<Template | null>(null);
   const [editModalVisible, setEditModalVisible] = useState(false);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    // Simulate API call
-    setTimeout(() => {
-      setTemplate(mockTemplate);
-      setLoading(false);
-    }, 1000);
-  }, [params.id]);
+  const {
+    data: singleTemplate,
+    isLoading,
+    refetch,
+  } = useGetSingleTemplateQuery(id);
+  const template = singleTemplate?.data;
 
-  const handleEdit = () => {
-    setEditModalVisible(true);
-  };
-
-  const handleEditSubmit = async (values: Partial<Template>) => {
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      setTemplate((prev) => (prev ? { ...prev, ...values } : null));
-      setEditModalVisible(false);
-      message.success("Template updated successfully!");
-    } catch (error) {
-      message.error("Failed to update template. Please try again.");
-    }
-  };
-
-  const handleDownload = () => {
-    message.info("Download functionality would be implemented here");
-  };
-
-  if (loading) {
+  // update template
+  const [updateTemplate] = useUpdateTemplateMutation();
+  if (isLoading) {
     return (
       <div className="p-6 max-w-4xl mx-auto">
         <Card loading />
@@ -96,98 +62,124 @@ export default function TemplateDetailsPage() {
     );
   }
 
+  const handleEdit = () => setEditModalVisible(true);
+
+  const handleEditSubmit = async (values: any) => {
+    try {
+      console.log(values);
+      const formData = new FormData();
+      formData.append("title", values.title);
+      formData.append("doc", values.file);
+      formData.append("price", values.price);
+      formData.append("type", values.type);
+      formData.append("description", values.description);
+      formData.append("status", values.status);
+      toast.promise(updateTemplate({ id, data: formData }).unwrap(), {
+        loading: "Updating template...",
+        success: (res) => {
+          refetch();
+          return <b>{res.message}</b>;
+        },
+        error: (res) => `Error: ${res.data?.message || "Something went wrong"}`,
+      });
+      setEditModalVisible(false);
+    } catch (error) {
+      message.error("Failed to update template. Please try again.");
+    }
+  };
+
+  const handleDownload = () => {
+    if (!template.file) return;
+    const link = document.createElement("a");
+    link.href = imgUrl + template.file;
+    link.download = template.title + ".pdf";
+    link.click();
+    message.success("Download started");
+  };
+
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="p-6 max-w-4xl mx-auto flex flex-col gap-4">
       <Card>
-        <div className="mb-6">
-          <Space className="mb-4">
-            <Button
-              type="text"
-              icon={<ArrowLeftOutlined />}
-              onClick={() => router.back()}
-            >
-              Back
-            </Button>
-          </Space>
-          <div className="flex justify-between items-start">
-            <div>
-              <Title level={2} className="!mb-2">
-                {template.name}
-              </Title>
-              <Space>
-                <Tag color={template.type === "CV" ? "blue" : "green"}>
-                  {template.type}
-                </Tag>
-                <Tag color={template.status === "Active" ? "success" : "error"}>
-                  {template.status}
-                </Tag>
-              </Space>
-            </div>
+        <Space className="mb-4">
+          <Button
+            type="text"
+            icon={<ArrowLeftOutlined />}
+            onClick={() => router.back()}
+          >
+            Back
+          </Button>
+        </Space>
+
+        <div className="flex justify-between items-start mb-6">
+          <div>
+            <Title level={2} className="!mb-2">
+              {template.title}
+            </Title>
             <Space>
-              <Button icon={<DownloadOutlined />} onClick={handleDownload}>
-                Download
-              </Button>
-              <Button
-                type="primary"
-                icon={<EditOutlined />}
-                onClick={handleEdit}
-              >
-                Edit
-              </Button>
+              <Tag color="blue">{template.type || "Resume"}</Tag>
             </Space>
           </div>
+          <Space>
+            <Button icon={<DownloadOutlined />} onClick={handleDownload}>
+              Download
+            </Button>
+            <Button
+              className="!bg-[#1a5fa4] !text-white !border-none"
+              icon={<EditOutlined />}
+              onClick={handleEdit}
+            >
+              Edit
+            </Button>
+          </Space>
         </div>
 
         <Descriptions bordered column={2}>
-          <Descriptions.Item label="Template Name" span={2}>
+          <Descriptions.Item label="Title" span={2}>
             <Space>
               <FileTextOutlined className="text-blue-500" />
-              {template.name}
+              {template.title}
             </Space>
           </Descriptions.Item>
-          <Descriptions.Item label="Type">{template.type}</Descriptions.Item>
-          <Descriptions.Item label="Status">
-            <Tag color={template.status === "Active" ? "success" : "error"}>
-              {template.status}
-            </Tag>
-          </Descriptions.Item>
-          <Descriptions.Item label="File Name">
-            {template.fileName}
-          </Descriptions.Item>
-          <Descriptions.Item label="File Size">
-            {template.fileSize}
-          </Descriptions.Item>
-          <Descriptions.Item label="Created Date">
-            {template.date}
-          </Descriptions.Item>
-          <Descriptions.Item label="Last Modified">
-            {template.date}
-          </Descriptions.Item>
+          {template.type && (
+            <Descriptions.Item label="Type">{template.type}</Descriptions.Item>
+          )}
+          {template.price && (
+            <Descriptions.Item label="Price">
+              $ {template.price}
+            </Descriptions.Item>
+          )}
+          {template.createdAt && (
+            <Descriptions.Item label="Created At">
+              {new Date(template.createdAt).toLocaleDateString()}
+            </Descriptions.Item>
+          )}
           {template.description && (
             <Descriptions.Item label="Description" span={2}>
               {template.description}
             </Descriptions.Item>
           )}
-          {template.tags && template.tags.length > 0 && (
-            <Descriptions.Item label="Tags" span={2}>
-              <Space wrap>
-                {template.tags.map((tag) => (
-                  <Tag key={tag} color="blue">
-                    {tag}
-                  </Tag>
-                ))}
-              </Space>
-            </Descriptions.Item>
-          )}
         </Descriptions>
       </Card>
 
+      {/* PDF Preview */}
+      {template.file && (
+        <Card title="PDF Preview">
+          <iframe
+            src={imgUrl + template.file}
+            className="w-full"
+            style={{ height: "600px" }}
+          />
+        </Card>
+      )}
+
+      {/* Edit Modal */}
       <Modal
         title="Edit Template"
         open={editModalVisible}
         onCancel={() => setEditModalVisible(false)}
         footer={null}
         width={600}
+        centered
       >
         <EditTemplateForm
           template={template}

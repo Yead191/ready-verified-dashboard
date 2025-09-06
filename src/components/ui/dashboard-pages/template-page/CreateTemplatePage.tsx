@@ -5,21 +5,34 @@ import { useRouter } from "next/navigation";
 import { Card, Typography, Button, Space, message } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import CreateTemplateForm from "./CreateTemplateForm";
+import { useAddTemplateMutation } from "@/redux/feature/templateApi/templateApi";
+import { toast } from "sonner";
 
 const { Title } = Typography;
 
 export default function CreateTemplatePage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-
-  const handleSubmit = async (values: FormData) => {
+  const [addTemplate] = useAddTemplateMutation();
+  const handleSubmit = (values: any) => {
     setLoading(true);
     try {
+      const formData = new FormData();
+      formData.append("title", values.title);
+      formData.append("doc", values.file);
+      formData.append("price", values.price);
+      formData.append("type", values.type);
+      formData.append("description", values.description);
       // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      message.success("Template created successfully!");
-      router.push("/");
+      toast.promise(addTemplate(formData).unwrap(), {
+        loading: "Creating template...",
+        success: (res) => {
+          router.push("/templates");
+          return <b>{res.message}</b>;
+        },
+        error: (res) => `Error: ${res.data?.message || "Something went wrong"}`,
+      });
+      // router.push("/");
     } catch (error) {
       message.error("Failed to create template. Please try again.");
     } finally {
@@ -28,7 +41,7 @@ export default function CreateTemplatePage() {
   };
 
   const handleCancel = () => {
-    router.push("/");
+    router.push("/templates");
   };
 
   return (

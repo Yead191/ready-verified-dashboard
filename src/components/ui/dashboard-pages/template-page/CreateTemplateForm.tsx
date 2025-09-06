@@ -3,7 +3,6 @@
 import { Form, Input, Select, Upload, Button, Space, message } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
 import type { UploadProps } from "antd";
-import type { CreateTemplateForm as FormData } from "@/data/template";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -25,18 +24,25 @@ export default function CreateTemplateForm({
   const uploadProps: UploadProps = {
     name: "file",
     multiple: false,
-    accept: ".pdf",
+    accept: ".pdf,.doc,.docx",
     beforeUpload: (file) => {
-      const isPDF = file.type === "application/pdf";
-      if (!isPDF) {
-        message.error("You can only upload PDF files!");
+      const isValidType =
+        file.type === "application/pdf" ||
+        file.type === "application/msword" ||
+        file.type ===
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+
+      if (!isValidType) {
+        message.error("You can only upload PDF or DOC/DOCX files!");
         return false;
       }
+
       const isLt10M = file.size / 1024 / 1024 < 10;
       if (!isLt10M) {
         message.error("File must be smaller than 10MB!");
         return false;
       }
+
       return false; // Prevent auto upload
     },
     onChange: (info) => {
@@ -69,7 +75,7 @@ export default function CreateTemplateForm({
       form={form}
       layout="vertical"
       onFinish={handleFinish}
-      className="max-w-2xl"
+      className="w-full"
     >
       <Form.Item
         name="type"
@@ -77,8 +83,8 @@ export default function CreateTemplateForm({
         rules={[{ required: true, message: "Please select a template type!" }]}
       >
         <Select placeholder="Select Template Type" size="large">
-          <Option value="CV">CV</Option>
-          <Option value="Resume">Resume</Option>
+          <Option value="cv">CV</Option>
+          <Option value="resume">Resume</Option>
         </Select>
       </Form.Item>
 
@@ -106,17 +112,30 @@ export default function CreateTemplateForm({
           </p>
         </Dragger>
       </Form.Item>
-
-      <Form.Item
-        name="name"
-        label="Enter Template Name"
-        rules={[
-          { required: true, message: "Please enter template name!" },
-          { min: 3, message: "Template name must be at least 3 characters!" },
-        ]}
-      >
-        <Input placeholder="Enter Template Name" size="large" />
-      </Form.Item>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* name */}
+        <Form.Item
+          name="title"
+          label="Enter Template Title"
+          rules={[
+            { required: true, message: "Please enter template title!" },
+            {
+              min: 3,
+              message: "Template title must be at least 3 characters!",
+            },
+          ]}
+        >
+          <Input placeholder="Enter Template title" size="large" />
+        </Form.Item>
+        {/* price */}
+        <Form.Item
+          name="price"
+          label="Enter Template Price"
+          rules={[{ required: true, message: "Please enter template price!" }]}
+        >
+          <Input type="number" placeholder="Enter Template Name" size="large" />
+        </Form.Item>
+      </div>
 
       <Form.Item name="description" label="Description (Optional)">
         <TextArea
@@ -133,10 +152,10 @@ export default function CreateTemplateForm({
             Cancel
           </Button>
           <Button
-            type="primary"
             htmlType="submit"
             size="large"
             loading={loading}
+            className="!bg-[#1a5fa4] !text-white !border-none"
           >
             Upload
           </Button>

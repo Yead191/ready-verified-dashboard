@@ -1,29 +1,48 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Card, Typography } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
-import { mockTemplates, Template } from "@/data/template";
 import TemplateTable from "./TemplateTable";
 import PageHeading from "@/components/shared/PageHeading";
-
-const { Title } = Typography;
+import {
+  useDeleteTemplateMutation,
+  useGetTemplatesQuery,
+} from "@/redux/feature/templateApi/templateApi";
+import DeleteModal from "@/components/shared/DeleteModal";
+import { toast } from "sonner";
 
 export default function TemplatesPage() {
   const router = useRouter();
-  const [templates, setTemplates] = useState<Template[]>(mockTemplates);
-
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  // const [templates, setTemplates] = useState<Template[]>(mockTemplates);
+  const { data: templateData, refetch } = useGetTemplatesQuery(null);
+  const [deleteTemplate] = useDeleteTemplateMutation();
+  const templates = templateData?.data || [];
   const handleCreateTemplate = () => {
     router.push("/templates/create");
   };
 
   const handleDeleteTemplate = (id: string) => {
-    setTemplates((prev) => prev.filter((template) => template.id !== id));
+    setDeleteId(id);
+    setDeleteModalOpen(true);
+    // setTemplates((prev) => prev.filter((template) => template.id !== id));
   };
-
+  // console.log(deleteId);
   const handleViewTemplate = (id: string) => {
     router.push(`/templates/${id}`);
+  };
+  const handleConfirmDelete = () => {
+    toast.promise(deleteTemplate(deleteId!).unwrap(), {
+      loading: "Deleting template...",
+      success: (res) => {
+        refetch();
+        setDeleteId(null);
+        setDeleteModalOpen(false);
+        return <b>{res.message}</b>;
+      },
+      error: (res) => `Error: ${res.data?.message || "Something went wrong"}`,
+    });
   };
 
   return (
@@ -34,6 +53,11 @@ export default function TemplatesPage() {
         templates={templates}
         onDelete={handleDeleteTemplate}
         onView={handleViewTemplate}
+      />
+      <DeleteModal
+        isOpen={deleteModalOpen}
+        onCancel={() => setDeleteModalOpen(false)}
+        handleDelete={handleConfirmDelete}
       />
     </section>
   );

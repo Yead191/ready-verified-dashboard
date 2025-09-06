@@ -1,17 +1,33 @@
-"use client"
+"use client";
 
-import { Table, Tag, Button, Space, Popconfirm, Tooltip } from "antd"
-import { EyeOutlined, DeleteOutlined, FileTextOutlined } from "@ant-design/icons"
-import type { ColumnsType } from "antd/es/table"
-import { Template } from "@/data/template"
+import { Table, Tag, Button, Space, Popconfirm, Tooltip } from "antd";
+import { EyeOutlined, DeleteOutlined } from "@ant-design/icons";
+import type { ColumnsType } from "antd/es/table";
+import { imgUrl } from "@/app/(dashboard)/layout";
+// import PdfThumbnail from "@/components/shared/PdfThumbnail";
 
-interface TemplateTableProps {
-  templates: Template[]
-  onDelete: (id: string) => void
-  onView: (id: string) => void
+interface Template {
+  _id: string;
+  file: string;
+  title: string;
+  type: string;
+  price: number;
+  description?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export default function TemplateTable({ templates, onDelete, onView }: TemplateTableProps) {
+interface TemplateTableProps {
+  templates: Template[];
+  onDelete: (id: string) => void;
+  onView: (id: string) => void;
+}
+
+export default function TemplateTable({
+  templates,
+  onDelete,
+  onView,
+}: TemplateTableProps) {
   const columns: ColumnsType<Template> = [
     {
       title: "S.No",
@@ -20,35 +36,68 @@ export default function TemplateTable({ templates, onDelete, onView }: TemplateT
       render: (_, __, index) => index + 1,
     },
     {
-      title: "Filing Name",
-      dataIndex: "name",
-      key: "name",
-      render: (name: string) => (
-        <Space>
-          <FileTextOutlined className="text-blue-500" />
-          <span className="font-medium">{name}</span>
-        </Space>
-      ),
+      title: "Preview",
+      dataIndex: "file",
+      key: "file",
+      width: 120,
+      render: (file: string) => {
+        const fullUrl = `${imgUrl}${file}`;
+        return (
+          <div className="w-[120px] h-[80px] overflow-hidden template">
+            <iframe
+              src={`${fullUrl}#page=1&zoom=0`}
+              width="120"
+              height="80"
+              style={{ border: "none", overflow: "hidden" }}
+              scrolling="no"
+            />
+          </div>
+        );
+      },
+    },
+
+    {
+      title: "Title",
+      dataIndex: "title",
+      key: "title",
+      render: (title: string) => <span className="font-medium">{title}</span>,
     },
     {
       title: "Type",
       dataIndex: "type",
       key: "type",
       width: 100,
-      render: (type: string) => <Tag color={type === "CV" ? "blue" : "green"}>{type}</Tag>,
+      render: (type: string) => (
+        <Tag color={type.toLowerCase() === "resume" ? "blue" : "green"}>
+          {type}
+        </Tag>
+      ),
     },
     {
-      title: "Date",
-      dataIndex: "date",
-      key: "date",
-      width: 120,
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
+      title: "Price",
+      dataIndex: "price",
+      key: "price",
       width: 100,
-      render: (status: string) => <Tag color={status === "Active" ? "success" : "error"}>{status}</Tag>,
+      render: (price: number) => `$${price}`,
+    },
+    // {
+    //   title: "Status",
+    //   dataIndex: "status",
+    //   key: "status",
+    //   width: 100,
+    //   render: (status: string) => `${status}`,
+    // },
+    {
+      title: "Created At",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      width: 160,
+      render: (date: string) =>
+        new Date(date).toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        }),
     },
     {
       title: "Actions",
@@ -59,39 +108,38 @@ export default function TemplateTable({ templates, onDelete, onView }: TemplateT
           <Tooltip title="View Details">
             <Button
               type="text"
-              icon={<EyeOutlined />}
-              onClick={() => onView(record.id)}
+              icon={<EyeOutlined style={{ fontSize: 20 }} />}
+              onClick={() => onView(record._id)}
               className="text-blue-500 hover:text-blue-700"
             />
           </Tooltip>
-          <Popconfirm
-            title="Delete Template"
-            description="Are you sure you want to delete this template?"
-            onConfirm={() => onDelete(record.id)}
-            okText="Yes"
-            cancelText="No"
-          >
-            <Tooltip title="Delete">
-              <Button type="text" icon={<DeleteOutlined />} className="text-red-500 hover:text-red-700" />
-            </Tooltip>
-          </Popconfirm>
+
+          <Tooltip title="Delete">
+            <Button
+              onClick={() => onDelete(record._id)}
+              type="text"
+              icon={<DeleteOutlined style={{ fontSize: 20 }} />}
+              className="text-red-500 hover:text-red-700"
+            />
+          </Tooltip>
         </Space>
       ),
     },
-  ]
+  ];
 
   return (
     <Table
       columns={columns}
       dataSource={templates}
-      rowKey="id"
+      rowKey="_id"
       pagination={{
         pageSize: 10,
         showSizeChanger: true,
         showQuickJumper: true,
-        showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} templates`,
+        showTotal: (total, range) =>
+          `${range[0]}-${range[1]} of ${total} templates`,
       }}
       className="w-full"
     />
-  )
+  );
 }

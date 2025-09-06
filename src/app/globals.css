@@ -133,3 +133,12 @@ body {
 .ant-form-item-explain-error {
   font-size: 12px;
 }
+
+.template {
+  overflow: hidden; /* Ensures no scrollbar appears */
+  scrollbar-width: none; /* For Firefox */
+}
+
+.template::-webkit-scrollbar {
+  display: none; /* For WebKit browsers (Chrome, Safari) */
+}

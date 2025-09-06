@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Table, Button } from "antd";
+import { Table, Button, Tooltip } from "antd";
 import { mockUsers, User } from "@/data/mockUsers";
 import UserDetailsModal from "./UserDetailsModal";
 import { toast } from "sonner";
-import { Lock, Unlock } from "lucide-react";
+import { Info, InfoIcon, Lock, Unlock } from "lucide-react";
 import { useGetUsersQuery } from "@/redux/feature/users/usersApi";
 import { imgUrl } from "@/app/(dashboard)/layout";
 
@@ -108,45 +108,35 @@ export default function UsersPageMain() {
       className:
         "px-6 py-4 whitespace-nowrap text-sm font-medium flex justify-center",
       render: (_: any, record: User) => (
-        <div className="flex gap-2 justify-end">
-          <Button
-            type="text"
-            onClick={() => handleViewDetails(record)}
-            className="text-blue-600 hover:text-blue-900 p-1 rounded"
-            title="View Details"
-            icon={
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-            }
-          />
-          <Button
-            type="text"
-            onClick={() => handleLockToggle(record.id)}
-            className={`p-1 rounded ${
-              record.isLocked
-                ? "text-green-600 hover:text-green-900"
-                : "text-red-600 hover:text-red-900"
-            }`}
-            title={record.isLocked ? "Unlock User" : "Lock User"}
-            icon={
-              record.isLocked ? (
-                <Lock size={16} color="red" />
-              ) : (
-                <Unlock size={16} />
-              )
-            }
-          />
+        <div className="flex gap-2 justify-end items-center">
+          <Tooltip title="View Details">
+            <Button
+              type="text"
+              onClick={() => handleViewDetails(record)}
+              className="text-blue-600 hover:text-blue-900 p-1 rounded"
+              title="View Details"
+              icon={<Info size={20} />}
+            />
+          </Tooltip>
+          <Tooltip title={record.isLocked ? "Unlock User" : "Lock User"}>
+            <Button
+              type="text"
+              onClick={() => handleLockToggle(record.id)}
+              className={`p-1 rounded  ${
+                record.isLocked
+                  ? "text-green-600 hover:text-green-900"
+                  : "text-red-600 hover:text-red-900"
+              }`}
+              title={record.isLocked ? "Unlock User" : "Lock User"}
+              icon={
+                record.isLocked ? (
+                  <Lock size={20} color="red" />
+                ) : (
+                  <Unlock size={20} />
+                )
+              }
+            />
+          </Tooltip>
         </div>
       ),
     },
