@@ -46,6 +46,13 @@ const supportApi = baseApi.injectEndpoints({
         };
       },
     }),
+    // delete faq
+    deleteFaq: build.mutation({
+      query: ({ id }) => ({
+        url: `/faq/${id}`,
+        method: "DELETE",
+      }),
+    }),
   }),
 });
 
@@ -55,4 +62,5 @@ export const {
   useUpdateFaqMutation,
   useAddSupportContentMutation,
   useGetFaqContentQuery,
+  useDeleteFaqMutation,
 } = supportApi;

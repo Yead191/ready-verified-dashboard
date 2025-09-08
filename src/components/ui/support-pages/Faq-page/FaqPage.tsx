@@ -10,6 +10,7 @@ import FaqModal from "./FaqModal";
 import DeleteModal from "./DeleteModal";
 import {
   useAddFaqMutation,
+  useDeleteFaqMutation,
   useGetFaqContentQuery,
   useUpdateFaqMutation,
 } from "@/redux/feature/support-page/SupportPageApi";
@@ -32,7 +33,8 @@ export default function FAQPage() {
   const [addFaq] = useAddFaqMutation();
   //update faq
   const [updateFaq] = useUpdateFaqMutation();
-
+  // delete faq
+  const [deleteFaq] = useDeleteFaqMutation();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [editingItem, setEditingItem] = useState<FAQItem | null>(null);
@@ -60,10 +62,19 @@ export default function FAQPage() {
   };
 
   const confirmDelete = () => {
+    // console.log(deletingItem);
     if (deletingItem) {
-      toast.success("FAQ item deleted successfully");
-      setIsDeleteModalVisible(false);
-      setDeletingItem(null);
+      toast.promise(deleteFaq({ id: deletingItem._id }).unwrap(), {
+        loading: "Deleting FAQ item...",
+        success: (res) => {
+          setIsDeleteModalVisible(false);
+          setDeletingItem(null);
+          refetch();
+          return <b>{res.message}</b>;
+        },
+        error: (err) =>
+          `Error: ${err?.data?.message || "Something went wrong"}`,
+      });
     }
   };
 
