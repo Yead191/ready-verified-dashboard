@@ -142,3 +142,16 @@ body {
 .template::-webkit-scrollbar {
   display: none; /* For WebKit browsers (Chrome, Safari) */
 }
+
+.jodit-container:not(.jodit_inline) {
+  border: none !important;
+  background-color: transparent !important;
+  border-radius: 11px !important;
+}
+.jodit-ui-group {
+  background-color: transparent !important;
+}
+.jodit-toolbar__box:not(:empty) {
+  background-color: transparent !important;
+  border: none !important;
+}

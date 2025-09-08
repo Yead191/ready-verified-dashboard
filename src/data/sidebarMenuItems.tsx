@@ -60,7 +60,7 @@ export const sidebarMenuItems = [
     label: "Settings",
     children: [
       {
-        key: "about-us",
+        key: "about",
         icon: <Info />,
         label: "About Us",
       },
