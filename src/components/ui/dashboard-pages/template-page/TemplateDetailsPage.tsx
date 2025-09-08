@@ -161,14 +161,34 @@ export default function TemplateDetailsPage({ id }: { id: string }) {
         </Descriptions>
       </Card>
 
-      {/* PDF Preview */}
+      {/* File Preview */}
       {template.file && (
-        <Card title="PDF Preview">
-          <iframe
-            src={imgUrl + template.file}
-            className="w-full"
-            style={{ height: "600px" }}
-          />
+        <Card title="File Preview">
+          {template.file.toLowerCase().endsWith(".pdf") ? (
+            <iframe
+              src={imgUrl + template.file}
+              className="w-full"
+              style={{ height: "600px", border: "none" }}
+            />
+          ) : template.file.toLowerCase().endsWith(".doc") ||
+            template.file.toLowerCase().endsWith(".docx") ? (
+            <div className="flex flex-col items-center justify-center py-10">
+              <FileTextOutlined style={{ fontSize: 48, color: "#2b579a" }} />
+              <p className="mt-2 text-gray-600">
+                Word Document Preview not supported
+              </p>
+              <Button
+                type="primary"
+                icon={<DownloadOutlined />}
+                className="mt-4 !bg-[#1a5fa4] !text-white !border-none"
+                onClick={handleDownload}
+              >
+                Download Document
+              </Button>
+            </div>
+          ) : (
+            <p>Unsupported file type</p>
+          )}
         </Card>
       )}
 

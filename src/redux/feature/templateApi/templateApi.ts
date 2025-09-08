@@ -8,6 +8,8 @@ const templateApi = baseApi.injectEndpoints({
         method: "GET",
         credentials: "include",
       }),
+      providesTags: ["Templates"],
+      keepUnusedDataFor: 0,
     }),
     addTemplate: builder.mutation({
       query: (data) => ({
@@ -15,8 +17,8 @@ const templateApi = baseApi.injectEndpoints({
         method: "POST",
         credentials: "include",
         body: data,
-        invalidatesTags: ["Templates"],
       }),
+      invalidatesTags: ["Templates"],
     }),
     deleteTemplate: builder.mutation({
       query: (id) => ({
@@ -31,16 +33,16 @@ const templateApi = baseApi.injectEndpoints({
         method: "PATCH",
         credentials: "include",
         body: data,
-        invalidatesTags: ["Templates"],
       }),
+      invalidatesTags: ["Templates"],
     }),
     getSingleTemplate: builder.query({
       query: (id) => ({
         url: `/template/${id}`,
         method: "GET",
         credentials: "include",
-        invalidatesTags: ["Templates"],
       }),
+      providesTags: ["Templates"],
     }),
   }),
 });

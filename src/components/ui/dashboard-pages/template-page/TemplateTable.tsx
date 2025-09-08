@@ -1,7 +1,11 @@
 "use client";
 
 import { Table, Tag, Button, Space, Popconfirm, Tooltip } from "antd";
-import { EyeOutlined, DeleteOutlined } from "@ant-design/icons";
+import {
+  EyeOutlined,
+  DeleteOutlined,
+  FileWordOutlined,
+} from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import { imgUrl } from "@/app/(dashboard)/layout";
 // import PdfThumbnail from "@/components/shared/PdfThumbnail";
@@ -42,20 +46,29 @@ export default function TemplateTable({
       width: 120,
       render: (file: string) => {
         const fullUrl = `${imgUrl}${file}`;
+        const isDoc =
+          file?.toLowerCase().endsWith(".doc") ||
+          file?.toLowerCase().endsWith(".docx");
+
         return (
-          <div className="w-[120px] h-[80px] overflow-hidden template">
-            <iframe
-              src={`${fullUrl}#page=1&zoom=0`}
-              width="120"
-              height="80"
-              style={{ border: "none", overflow: "hidden" }}
-              scrolling="no"
-            />
+          <div className="w-[120px] h-[80px] flex items-center justify-center overflow-hidden template">
+            {isDoc ? (
+              // Example: use any icon you prefer
+              <FileWordOutlined style={{ fontSize: 44, color: "#2b579a" }} />
+            ) : (
+              // Or  />
+              <iframe
+                src={`${fullUrl}#page=1&zoom=0`}
+                width="120"
+                height="80"
+                style={{ border: "none", overflow: "hidden" }}
+                scrolling="no"
+              />
+            )}
           </div>
         );
       },
     },
-
     {
       title: "Title",
       dataIndex: "title",
