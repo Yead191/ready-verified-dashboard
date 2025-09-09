@@ -110,12 +110,16 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
         <Button key="cancel" onClick={handleCancel}>
           Cancel
         </Button>,
-        <Button key="submit" type="primary" onClick={handleSubmit}>
+        <Button
+          className="!bg-[#1a5fa4] !text-white !border-none"
+          key="submit"
+          onClick={handleSubmit}
+        >
           Create
         </Button>,
       ]}
       width={800}
-      destroyOnClose
+      destroyOnHidden 
     >
       <Form form={form} layout="vertical">
         <Form.Item
@@ -159,7 +163,10 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Questions
             </label>
-            <Form.List name="questions" initialValue={[{ question: "" }]}>
+            <Form.List
+              name="questions"
+              initialValue={[{ question: "", type: "mcq" }]}
+            >
               {(fields, { add, remove }) => (
                 <div className="space-y-3">
                   {fields.map(({ key, name, ...restField }) => (
@@ -177,14 +184,30 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
                               message: "Please enter question text",
                             },
                           ]}
-                          className="mb-0"
+                          className="mb-2"
                         >
                           <Input
                             placeholder="Enter question text"
                             style={{ height: 40 }}
                           />
                         </Form.Item>
+
+                        {/* 🔹 Question Type Selector */}
+                        <Form.Item
+                          {...restField}
+                          name={[name, "type"]}
+                          initialValue="mcq"
+                          className="mb-0"
+                        >
+                          <select className="w-full border rounded px-2 py-2 text-sm">
+                            <option value="boolean">
+                              Multiple Choice (MCQ)
+                            </option>
+                            <option value="plain">Fill in the Blank</option>
+                          </select>
+                        </Form.Item>
                       </div>
+
                       {fields.length > 1 && (
                         <Button
                           type="text"
@@ -195,9 +218,10 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
                       )}
                     </div>
                   ))}
+
                   <Button
                     type="dashed"
-                    onClick={() => add()}
+                    onClick={() => add({ question: "", type: "mcq" })}
                     icon={<PlusOutlined />}
                     className="w-full mt-2"
                   >

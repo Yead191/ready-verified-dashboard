@@ -2,7 +2,7 @@
 
 import type React from "react";
 import { useEffect, useState } from "react";
-import { Modal, Button, Form, Input, Upload } from "antd";
+import { Modal, Button, Form, Input, Upload, Select } from "antd";
 import {
   UploadOutlined,
   PlusOutlined,
@@ -19,7 +19,7 @@ interface ViewDetailsModalProps {
   category: Category | null;
   refetch: () => void;
 }
-
+const { Option } = Select;
 const ViewDetailsModal: React.FC<ViewDetailsModalProps> = ({
   visible,
   onCancel,
@@ -31,12 +31,15 @@ const ViewDetailsModal: React.FC<ViewDetailsModalProps> = ({
   const [updateCategory] = useUpdateCategoryMutation();
 
   // inside ViewDetailsModal
-  // reset form values when category changes
+  // Reset form values when category changes
   useEffect(() => {
     if (category) {
       form.setFieldsValue({
         categoryTitle: category.title,
-        questions: category.questions.map((q) => ({ question: q.question })),
+        questions: category.questions.map((q) => ({
+          question: q.question,
+          type: q.type || "boolean",
+        })),
         categoryImage: [],
       });
     } else {
@@ -149,34 +152,47 @@ const ViewDetailsModal: React.FC<ViewDetailsModalProps> = ({
                     {fields.map(({ key, name, ...restField }) => (
                       <div
                         key={key}
-                        className="flex items-start gap-2 border p-2 rounded-md"
+                        className="flex flex-col gap-2 border p-2 rounded-md"
                       >
-                        <div className="flex-1">
-                          <div className="text-xs text-gray-500 mb-1">
-                            Q.{" "} {String(name + 1).padStart(2, "0")}
+                        <div className="flex items-center justify-between">
+                          <div className="text-xs text-gray-500">
+                            Q. {String(name + 1).padStart(2, "0")}
                           </div>
-                          <Form.Item
-                            {...restField}
-                            name={[name, "question"]}
-                            rules={[
-                              {
-                                required: true,
-                                message: "Please enter question text",
-                              },
-                            ]}
-                            className="mb-0"
-                          >
-                            <Input placeholder="Enter question text" />
-                          </Form.Item>
+                          {fields.length > 1 && (
+                            <Button
+                              type="text"
+                              icon={<MinusCircleOutlined />}
+                              onClick={() => remove(name)}
+                              className="text-red-500 hover:text-red-700"
+                            />
+                          )}
                         </div>
-                        {fields.length > 1 && (
-                          <Button
-                            type="text"
-                            icon={<MinusCircleOutlined />}
-                            onClick={() => remove(name)}
-                            className="text-red-500 hover:text-red-700 mt-6"
-                          />
-                        )}
+
+                        <Form.Item
+                          {...restField}
+                          name={[name, "question"]}
+                          rules={[
+                            {
+                              required: true,
+                              message: "Please enter question text",
+                            },
+                          ]}
+                          className="mb-0"
+                        >
+                          <Input placeholder="Enter question text" />
+                        </Form.Item>
+
+                        <Form.Item
+                          {...restField}
+                          name={[name, "type"]}
+                          initialValue="boolean"
+                          className="mb-0"
+                        >
+                          <Select>
+                            <Option value="boolean">MCQ</Option>
+                            <Option value="plain">Fill in the Blank</Option>
+                          </Select>
+                        </Form.Item>
                       </div>
                     ))}
 
@@ -199,14 +215,16 @@ const ViewDetailsModal: React.FC<ViewDetailsModalProps> = ({
                     className="border border-gray-200 rounded p-2"
                   >
                     <span className="font-medium text-blue-600">
-                      Q. {" "}{String(i + 1).padStart(2, "0")}:
+                      Q. {String(i + 1).padStart(2, "0")}:
                     </span>{" "}
                     {q.question}
+                    <div className="text-xs text-gray-500 italic">
+                      Type: {q.type === "boolean" ? "MCQ" : "Fill in the Blank"}
+                    </div>
                   </div>
                 ))}
               </div>
             )}
-
             {/* Action Buttons */}
             <div className="pt-4 border-t border-gray-200 flex justify-end gap-3">
               {isEditing ? (

@@ -49,11 +49,11 @@ export const sidebarMenuItems = [
     icon: <Layout />,
     label: "Templates",
   },
-  {
-    key: "earning",
-    icon: <Wallet />,
-    label: "Earning",
-  },
+  // {
+  //   key: "earning",
+  //   icon: <Wallet />,
+  //   label: "Earning",
+  // },
   {
     key: "settings",
     icon: <Settings />,

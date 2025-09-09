@@ -155,3 +155,7 @@ body {
   background-color: transparent !important;
   border: none !important;
 }
+
+.assessment-status-select .ant-select {
+  border: none !important;
+}
