@@ -26,8 +26,8 @@ const CompleteAssessmentModal: React.FC<Props> = ({
     <p>
       Total Score:{" "}
       <strong>
-        {totalMarks.obtained}/{totalMarks.total} (
-        {((totalMarks.obtained / totalMarks.total) * 100).toFixed(1)}%)
+        {totalMarks?.obtained}/{totalMarks?.total} (
+        {((totalMarks?.obtained / totalMarks?.total) * 100).toFixed(1)}%)
       </strong>
     </p>
   </Modal>

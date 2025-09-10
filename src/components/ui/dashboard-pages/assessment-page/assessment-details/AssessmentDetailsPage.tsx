@@ -95,9 +95,9 @@ const AssessmentDetailsPage = ({ id }: { id: string }) => {
         <PersonalInfo
           data={assessment.personal_information}
           user={assessment?.user}
-          category={assessment.category}
+          category={assessment?.category}
         />
-        <ProfessionalInfo data={assessment.professional_information} />
+        <ProfessionalInfo data={assessment?.professional_information} />
         <AssessmentInfo
           data={assessment}
           totalMarks={totalMarks}
@@ -117,14 +117,25 @@ const AssessmentDetailsPage = ({ id }: { id: string }) => {
         <Space>
           {assessment.status !== "completed" && (
             <Button
-              type="primary"
+              style={{
+                backgroundColor: "#1a5fa4",
+                color: "white",
+                height: 40,
+              }}
               icon={<CheckOutlined />}
               onClick={() => setShowCompleteModal(true)}
             >
               Complete Assessment
             </Button>
           )}
-          <Button onClick={() => router.back()}>Back to List</Button>
+          <Button
+            style={{
+              height: 40,
+            }}
+            onClick={() => router.back()}
+          >
+            Back to List
+          </Button>
         </Space>
       </section>
 

@@ -17,7 +17,15 @@ const usersApi = baseApi.injectEndpoints({
         credentials: "include",
       }),
     }),
+    lockUser: build.mutation({
+      query: (id) => ({
+        url: `/user/${id}`,
+        method: "PATCH",
+        credentials: "include",
+      }),
+    }),
   }),
 });
 
-export const { useGetUsersQuery, useGetSingleUserQuery } = usersApi;
+export const { useGetUsersQuery, useGetSingleUserQuery, useLockUserMutation } =
+  usersApi;

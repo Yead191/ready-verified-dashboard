@@ -15,19 +15,19 @@ interface Props {
 const ProfessionalInfo: React.FC<Props> = ({ data }) => (
   <Card title="Professional Information" style={{ marginBottom: 16 }}>
     <Descriptions bordered column={2}>
-      <Descriptions.Item label="Job Title">{data.job_title}</Descriptions.Item>
-      <Descriptions.Item label="Company">{data.company}</Descriptions.Item>
+      <Descriptions.Item label="Job Title">{data?.job_title}</Descriptions.Item>
+      <Descriptions.Item label="Company">{data?.company}</Descriptions.Item>
       <Descriptions.Item label="Experience">
-        {data.experience}
+        {data?.experience}
       </Descriptions.Item>
       <Descriptions.Item label="LinkedIn">
-        <a href={data.linkedin_url} target="_blank" rel="noopener noreferrer">
+        <a href={data?.linkedin_url} target="_blank" rel="noopener noreferrer">
           View Profile
         </a>
       </Descriptions.Item>
       <Descriptions.Item label="Skills" span={2}>
         <Space wrap>
-          {data.skills.map((skill) => (
+          {data?.skills?.map((skill) => (
             <Tag key={skill} color="blue">
               {skill}
             </Tag>
@@ -35,7 +35,7 @@ const ProfessionalInfo: React.FC<Props> = ({ data }) => (
         </Space>
       </Descriptions.Item>
       <Descriptions.Item label="Work Experience" span={2}>
-        {data.work_experience}
+        {data?.work_experience}
       </Descriptions.Item>
     </Descriptions>
   </Card>

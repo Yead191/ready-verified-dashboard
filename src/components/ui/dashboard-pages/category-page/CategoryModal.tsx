@@ -41,6 +41,7 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
       const formData = new FormData();
       formData.append("title", values.title);
       formData.append("questions", JSON.stringify(questions));
+      // formData.append("type", values.type);
 
       // Add today's date
       const today = new Date();
@@ -119,7 +120,7 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
         </Button>,
       ]}
       width={800}
-      destroyOnHidden 
+      destroyOnHidden
     >
       <Form form={form} layout="vertical">
         <Form.Item
@@ -165,7 +166,7 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
             </label>
             <Form.List
               name="questions"
-              initialValue={[{ question: "", type: "mcq" }]}
+              initialValue={[{ question: "", type: "boolean" }]}
             >
               {(fields, { add, remove }) => (
                 <div className="space-y-3">
@@ -196,7 +197,7 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
                         <Form.Item
                           {...restField}
                           name={[name, "type"]}
-                          initialValue="mcq"
+                          initialValue="boolean"
                           className="mb-0"
                         >
                           <select className="w-full border rounded px-2 py-2 text-sm">

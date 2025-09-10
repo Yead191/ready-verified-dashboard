@@ -69,7 +69,7 @@ export default function EditProfileModal({
           url: URL.createObjectURL(file),
         },
       ]);
-      return false; 
+      return false;
     },
     fileList,
     onRemove: () => {
@@ -166,7 +166,6 @@ export default function EditProfileModal({
 
         {/* Save Button */}
         <div style={{ textAlign: "center", marginTop: "32px" }}>
-          
           <Button
             type="primary"
             onClick={handleSave}

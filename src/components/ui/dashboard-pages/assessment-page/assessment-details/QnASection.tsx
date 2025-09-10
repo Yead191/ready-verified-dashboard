@@ -33,7 +33,7 @@ const QnASection: React.FC<Props> = ({
   setTempMarks,
 }) => (
   <Card title="Questions & Answers" style={{ marginBottom: 16 }}>
-    {qna.map((qa, index) => (
+    {qna?.map((qa, index) => (
       <Card
         key={qa._id}
         type="inner"

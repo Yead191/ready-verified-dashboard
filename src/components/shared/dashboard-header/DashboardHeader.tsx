@@ -6,12 +6,25 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useGetProfileQuery } from "@/redux/feature/auth/authApi";
 import { imgUrl } from "@/app/(dashboard)/layout";
+import { useGetNotificationQuery } from "@/redux/feature/notification/notificationApi";
+import { io } from "socket.io-client";
+
 // import { user } from "@/data/user";
 
 export default function DashboardHeader() {
   const { Title } = Typography;
   const pathname = usePathname();
+  const socket = useMemo(() => io(imgUrl), []);
+
   const { data: user } = useGetProfileQuery(null);
+  const { data: notificationData, refetch } = useGetNotificationQuery({});
+  // socket implementation
+  useEffect(() => {
+    socket.on(`notification::${user?.data?._id}`, (data) => {
+      // console.log(data);
+      refetch();
+    });
+  }, [user?.data?._id]);
 
   const isLoading = false;
   const formatPathName = (slug: string | undefined) => {
@@ -59,14 +72,14 @@ export default function DashboardHeader() {
         {formatPathName(targetSlug)}
       </Title>
       <Space style={{ gap: "30px" }} size="middle">
-        <Link href={"/"}>
+        <Link href={"/notifications"}>
           <Badge
             size="small"
             style={{
               top: "6px",
               right: "6px",
             }}
-            count={4}
+            count={notificationData?.data?.unread || 0}
           >
             <BellOutlined
               style={{
@@ -91,8 +104,15 @@ export default function DashboardHeader() {
                   {user?.data?.name}
                 </span>
 
-                <p className="text-[10px] text-gray-400 -mt-1">
-                  {user?.data?.role}
+                <p className="text-[12px] text-gray-400 -mt-1">
+                  {user?.data?.role
+                    ?.toLowerCase()
+                    .split("_")
+                    .map(
+                      (word: string) =>
+                        word.charAt(0).toUpperCase() + word.slice(1)
+                    )
+                    .join(" ")}
                 </p>
               </div>
             </>

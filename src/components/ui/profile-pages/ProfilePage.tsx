@@ -106,7 +106,20 @@ export default function ProfilePage() {
             <Title level={4} style={{ margin: "8px 0 4px 0", color: "#333" }}>
               {user?.name}
             </Title>
-            <Text style={{ color: "#1890ff", fontSize: 16 }}>{user?.role}</Text>
+            <Text
+              style={{
+                color: "#1890ff",
+                fontSize: 16,
+              }}
+            >
+              {user?.role
+                ?.toLowerCase()
+                .split("_")
+                .map(
+                  (word: string) => word.charAt(0).toUpperCase() + word.slice(1)
+                )
+                .join(" ")}
+            </Text>
           </div>
 
           {/* Right Column - Detailed Information */}

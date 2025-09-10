@@ -1,12 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { use, useState } from "react";
 import { Table, Button, Tooltip } from "antd";
-import { mockUsers, User } from "@/data/mockUsers";
+import { User } from "@/data/mockUsers";
 import UserDetailsModal from "./UserDetailsModal";
 import { toast } from "sonner";
 import { Info, InfoIcon, Lock, Unlock } from "lucide-react";
-import { useGetUsersQuery } from "@/redux/feature/users/usersApi";
+import {
+  useGetUsersQuery,
+  useLockUserMutation,
+} from "@/redux/feature/users/usersApi";
 import { imgUrl } from "@/app/(dashboard)/layout";
 
 // Define the User interface
@@ -18,9 +21,11 @@ export default function UsersPageMain() {
     "CANDIDATE"
   );
   // console.log(activeTab);
-  const { data: usersData } = useGetUsersQuery({
+  const { data: usersData, refetch } = useGetUsersQuery({
     role: activeTab,
   });
+  // lock user
+  const [lockUser] = useLockUserMutation();
   // console.log(usersData);
 
   const handleViewDetails = (user: any) => {
@@ -28,8 +33,18 @@ export default function UsersPageMain() {
     setIsModalVisible(true);
   };
 
-  const handleLockToggle = (userId: number) => {
-    toast.success("User locked successfully!");
+  const handleLockToggle = (userId: any) => {
+    console.log(userId);
+    toast.promise(lockUser(userId).unwrap(), {
+      loading: "Locking user...",
+      success: (res) => {
+        refetch();
+        return `Status updated to ${
+          res.data.status === "active" ? "active" : "locked"
+        }!`;
+      },
+      error: (err) => `Error: ${err?.data?.message || "Something went wrong"}`,
+    });
   };
 
   // Define AntD Table columns
@@ -98,7 +113,7 @@ export default function UsersPageMain() {
               : "bg-red-100 text-red-800"
           }`}
         >
-          {status}
+          {status === "active" ? "Active" : "Locked"}
         </span>
       ),
     },
@@ -107,7 +122,7 @@ export default function UsersPageMain() {
       key: "action",
       className:
         "px-6 py-4 whitespace-nowrap text-sm font-medium flex justify-center",
-      render: (_: any, record: User) => (
+      render: (_: any, record: any) => (
         <div className="flex gap-2 justify-end items-center">
           <Tooltip title="View Details">
             <Button
@@ -118,18 +133,20 @@ export default function UsersPageMain() {
               icon={<Info size={20} />}
             />
           </Tooltip>
-          <Tooltip title={record.isLocked ? "Unlock User" : "Lock User"}>
+          <Tooltip
+            title={record.status === "delete" ? "Unlock User" : "Lock User"}
+          >
             <Button
               type="text"
-              onClick={() => handleLockToggle(record.id)}
+              onClick={() => handleLockToggle(record._id)}
               className={`p-1 rounded  ${
                 record.isLocked
                   ? "text-green-600 hover:text-green-900"
                   : "text-red-600 hover:text-red-900"
               }`}
-              title={record.isLocked ? "Unlock User" : "Lock User"}
+              title={record.status === "delete" ? "Unlock User" : "Lock User"}
               icon={
-                record.isLocked ? (
+                record.status === "delete" ? (
                   <Lock size={20} color="red" />
                 ) : (
                   <Unlock size={20} />
