@@ -94,6 +94,7 @@ const AssessmentDetailsPage = ({ id }: { id: string }) => {
 
         <PersonalInfo
           data={assessment.personal_information}
+          user={assessment?.user}
           category={assessment.category}
         />
         <ProfessionalInfo data={assessment.professional_information} />

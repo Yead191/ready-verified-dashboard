@@ -80,7 +80,7 @@ export default function DashboardHeader() {
             />
           </Badge>
         </Link>
-        <Link href={"/"} className="flex items-center gap-2">
+        <Link href={"/profile"} className="flex items-center gap-2">
           {isLoading ? (
             <div className="w-6 h-6 border-2 border-gray-300 border-t-black rounded-full animate-spin"></div>
           ) : (

@@ -20,7 +20,15 @@ const assessmentApi = baseApi.injectEndpoints({
         };
       },
     }),
+    changeStatus: build.mutation({
+      query: ({ id, data }) => ({
+        url: `/assessment/change-status/${id}`,
+        method: "PATCH",
+        credentials: "include",
+        body: data,
+      }),
+    }),
   }),
 });
-export const { useGetAssessmentQuery, useGetSingleAssessmentQuery } =
+export const { useGetAssessmentQuery, useGetSingleAssessmentQuery , useChangeStatusMutation} =
   assessmentApi;

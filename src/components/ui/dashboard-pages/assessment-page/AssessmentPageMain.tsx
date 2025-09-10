@@ -17,23 +17,38 @@ import type { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import { mockAssessment } from "@/data/assessment";
-import { useGetAssessmentQuery } from "@/redux/feature/assessmentApi/assessmentApi";
+import {
+  useChangeStatusMutation,
+  useGetAssessmentQuery,
+} from "@/redux/feature/assessmentApi/assessmentApi";
 import Link from "next/link";
+import PrimaryButton from "@/components/shared/PrimaryButton";
+import { imgUrl } from "@/app/(dashboard)/layout";
+import { toast } from "sonner";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
 
 const AssessmentPage = () => {
-  const router = useRouter();
   // get assessment data
   const { data: assessments, refetch } = useGetAssessmentQuery(null);
   const assessmentData = assessments?.data || [];
+
+  //   handle change status
+  const [changeStatus] = useChangeStatusMutation();
   const handleStatusChange = (recordId: any, newStatus: any) => {
-    // setAssessmentData((prev: any[]) =>
-    //   prev.map((record: any) =>
-    //     record._id === recordId ? { ...record, status: newStatus } : record
-    //   )
-    // );
+    console.log(recordId, newStatus);
+    toast.promise(
+      changeStatus({ id: recordId, data: { status: newStatus } }).unwrap(),
+      {
+        loading: "Updating status...",
+        success: (res) => {
+          refetch();
+          return <b>{res.message}</b>;
+        },
+        error: (res) => `Error: ${res.data?.message || "Something went wrong"}`,
+      }
+    );
   };
 
   const columns: ColumnsType<any> = [
@@ -48,14 +63,9 @@ const AssessmentPage = () => {
       dataIndex: "personal_information",
       key: "name",
       width: 200,
-      render: (personalInfo: any) => (
+      render: (personalInfo: any, record: any) => (
         <Space>
-          {/* <Avatar
-            src={`/placeholder.svg?height=32&width=32&query=${
-              personalInfo?.name || ""
-            }`}
-            size="small"
-          /> */}
+          <Avatar src={imgUrl + record?.user?.image || ""} size="small" />
           <Text strong>{personalInfo?.name}</Text>
         </Space>
       ),
@@ -103,8 +113,8 @@ const AssessmentPage = () => {
           <Option value="approved">
             <Tag color="green">Approved</Tag>
           </Option>
-          <Option value="reject">
-            <Tag color="red">Reject</Tag>
+          <Option value="rejected">
+            <Tag color="red">Rejected</Tag>
           </Option>
           <Option value="cancelled">
             <Tag color="orange">Cancelled</Tag>
@@ -117,13 +127,22 @@ const AssessmentPage = () => {
     },
     {
       title: "Job Meeting",
-      key: "meeting",
+      key: "zoomLink",
       width: 120,
       align: "center" as any,
-      render: () => (
-        <Button type="primary" size="small">
-          Join Now
-        </Button>
+      render: (_: any, record: any) => (
+        <a href={record.zoomLink} target="_blank" rel="noopener noreferrer">
+          <Button
+            disabled={!record.zoomLink}
+            style={{
+              backgroundColor: !record.zoomLink ? "gray" : "#1a5fa4",
+              color: "white",
+              border: "none",
+            }}
+          >
+            {record?.zoomLink ? "Join Meeting" : "Not Available"}
+          </Button>
+        </a>
       ),
     },
     {
