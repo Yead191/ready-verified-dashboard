@@ -1,11 +1,12 @@
 import React from "react";
 import { Modal } from "antd";
+import PrimaryButton from "@/components/shared/PrimaryButton";
 
 interface Props {
   open: boolean;
   onOk: () => void;
   onCancel: () => void;
-  totalMarks: { obtained: number; total: number };
+  totalMarks: any;
 }
 
 const CompleteAssessmentModal: React.FC<Props> = ({
@@ -17,19 +18,18 @@ const CompleteAssessmentModal: React.FC<Props> = ({
   <Modal
     title="Complete Assessment"
     open={open}
-    onOk={onOk}
-    onCancel={onCancel}
+    footer={null}
     okText="Complete"
-    cancelText="Cancel"
+    centered
+    onCancel={onCancel}
   >
     <p>Are you sure you want to mark this assessment as completed?</p>
     <p>
-      Total Score:{" "}
-      <strong>
-        {totalMarks?.obtained}/{totalMarks?.total} (
-        {((totalMarks?.obtained / totalMarks?.total) * 100).toFixed(1)}%)
-      </strong>
+      Total Score: <strong>{totalMarks}/100</strong>
     </p>
+    <div className="flex justify-end mt-4">
+      <PrimaryButton text="Complete Assessment" handleEvent={onOk} />
+    </div>
   </Modal>
 );
 

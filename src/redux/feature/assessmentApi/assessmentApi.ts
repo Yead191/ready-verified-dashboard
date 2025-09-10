@@ -27,8 +27,12 @@ const assessmentApi = baseApi.injectEndpoints({
         credentials: "include",
         body: data,
       }),
+      invalidatesTags: ["assessment"],
     }),
   }),
 });
-export const { useGetAssessmentQuery, useGetSingleAssessmentQuery , useChangeStatusMutation} =
-  assessmentApi;
+export const {
+  useGetAssessmentQuery,
+  useGetSingleAssessmentQuery,
+  useChangeStatusMutation,
+} = assessmentApi;

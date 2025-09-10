@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Descriptions, Tag, Typography } from "antd";
+import { Card, Descriptions, InputNumber, Tag, Typography } from "antd";
 import dayjs from "dayjs";
 
 const { Text } = Typography;
@@ -10,15 +10,18 @@ interface Props {
     date: string;
     start_time: string;
     end_time: string;
+    mark: number;
   };
-  totalMarks: { obtained: number; total: number };
   getStatusColor: (status: string) => string;
+  givenMark: number | null;
+  setGivenMark: any;
 }
 
 const AssessmentInfo: React.FC<Props> = ({
   data,
-  totalMarks,
   getStatusColor,
+  givenMark,
+  setGivenMark,
 }) => (
   <Card title="Assessment Information" style={{ marginBottom: 16 }}>
     <Descriptions bordered column={2}>
@@ -39,17 +42,31 @@ const AssessmentInfo: React.FC<Props> = ({
       <Descriptions.Item label="Duration">
         {dayjs(data?.end_time).diff(dayjs(data?.start_time), "minute")} minutes
       </Descriptions.Item>
-      <Descriptions.Item label="Total Score">
-        <Text
-          strong
-          style={{
-            color:
-              totalMarks?.obtained >= totalMarks?.total * 0.7 ? "green" : "red",
-          }}
-        >
-          {totalMarks?.obtained}/{totalMarks?.total} (
-          {((totalMarks?.obtained / totalMarks?.total) * 100).toFixed(1)}%)
-        </Text>
+      <Descriptions.Item label={data?.mark ? "Total Mark" : "Give Marks"}>
+        {data?.mark ? (
+          <Text
+            strong
+            style={{
+              color: data.mark >= 70 ? "green" : "red",
+              fontSize: 16,
+            }}
+          >
+            {data.mark}/100
+          </Text>
+        ) : (
+          <>
+            <InputNumber
+              min={0}
+              max={100}
+              value={givenMark ?? undefined}
+              onChange={(value) => setGivenMark(value)}
+              placeholder="Enter marks (0-100)"
+            />
+            <Text style={{ marginLeft: 8 }} type="secondary">
+              /100
+            </Text>
+          </>
+        )}
       </Descriptions.Item>
     </Descriptions>
   </Card>

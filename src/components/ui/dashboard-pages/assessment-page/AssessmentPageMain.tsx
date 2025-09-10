@@ -75,6 +75,7 @@ const AssessmentPage = () => {
       dataIndex: "category",
       key: "category",
       width: 150,
+      render: (category: any) => <Text>{category?.title}</Text>,
     },
     {
       title: "Date",
@@ -107,7 +108,7 @@ const AssessmentPage = () => {
           size="small"
           className="assessment-status-select"
         >
-          <Option value="pending">
+          <Option value="pending" style={{ background: "blue" }}>
             <Tag color="blue">Pending</Tag>
           </Option>
           <Option value="approved">

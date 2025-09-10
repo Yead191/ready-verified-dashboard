@@ -9,9 +9,13 @@ import PersonalInfo from "./PersonalInfo";
 import ProfessionalInfo from "./ProfessionalInfo";
 import AssessmentInfo from "./AssessmentInfo";
 import QnASection from "./QnASection";
-import { useGetSingleAssessmentQuery } from "@/redux/feature/assessmentApi/assessmentApi";
+import {
+  useChangeStatusMutation,
+  useGetSingleAssessmentQuery,
+} from "@/redux/feature/assessmentApi/assessmentApi";
 import CompleteAssessmentModal from "./CompleteAssessmentModal";
 import Spinner from "@/components/shared/spinner/Spinner";
+import { toast } from "sonner";
 
 const { Title } = Typography;
 
@@ -39,8 +43,20 @@ const AssessmentDetailsPage = ({ id }: { id: string }) => {
   const [tempMarks, setTempMarks] = useState<number>(0);
   const [showCompleteModal, setShowCompleteModal] = useState(false);
   // get single assessment details
-  const { data: assessmentData, isLoading } = useGetSingleAssessmentQuery(id);
+  const {
+    data: assessmentData,
+    isLoading,
+    refetch,
+  } = useGetSingleAssessmentQuery(id);
   const assessment = assessmentData?.data || {};
+
+  const [givenMark, setGivenMark] = useState<number | null>(
+    assessment?.mark || null
+  );
+
+  // complete assessment
+  const [changeStatus] = useChangeStatusMutation();
+
   console.log(assessmentData, id);
   const handleEditMarks = (questionId: string, currentMarks: number) => {
     setEditingMarks(questionId);
@@ -60,10 +76,21 @@ const AssessmentDetailsPage = ({ id }: { id: string }) => {
   };
 
   const handleCompleteAssessment = () => {
-    // if (!assessment) return;
-    // setAssessment((prev) => ({ ...prev!, status: "completed" }));
-    // setShowCompleteModal(false);
-    // message.success("Assessment completed successfully");
+    toast.promise(
+      changeStatus({
+        id: id,
+        data: { status: "completed", mark: givenMark },
+      }).unwrap(),
+      {
+        loading: "Updating status...",
+        success: (res) => {
+          setShowCompleteModal(false);
+          refetch();
+          return <b>{res.message}</b>;
+        },
+        error: (res) => `Error: ${res.data?.message || "Something went wrong"}`,
+      }
+    );
   };
 
   const getTotalMarks = () => {
@@ -100,8 +127,9 @@ const AssessmentDetailsPage = ({ id }: { id: string }) => {
         <ProfessionalInfo data={assessment?.professional_information} />
         <AssessmentInfo
           data={assessment}
-          totalMarks={totalMarks}
           getStatusColor={getStatusColor}
+          givenMark={givenMark}
+          setGivenMark={setGivenMark}
         />
 
         <QnASection
@@ -143,7 +171,7 @@ const AssessmentDetailsPage = ({ id }: { id: string }) => {
         open={showCompleteModal}
         onOk={handleCompleteAssessment}
         onCancel={() => setShowCompleteModal(false)}
-        totalMarks={totalMarks}
+        totalMarks={givenMark ? givenMark : 0}
       />
     </div>
   );

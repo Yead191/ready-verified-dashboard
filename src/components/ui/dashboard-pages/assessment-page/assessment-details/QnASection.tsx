@@ -81,7 +81,7 @@ const QnASection: React.FC<Props> = ({
           </div>
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+        {/* <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
           <Text strong>Marks:</Text>
           {editingMarks === qa._id ? (
             <Space>
@@ -127,7 +127,7 @@ const QnASection: React.FC<Props> = ({
               </Button>
             </Space>
           )}
-        </div>
+        </div> */}
       </Card>
     ))}
   </Card>
