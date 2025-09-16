@@ -1,6 +1,11 @@
 import TemplateDetailsPage from "@/components/ui/dashboard-pages/template-page/TemplateDetailsPage";
 import React from "react";
-
-export default function page({ params }: { params: { id: string } }) {
-  return <TemplateDetailsPage id={params.id} />;
+interface PageProps {
+  params: Promise<{
+    id: string;
+  }>;
+}
+export default async function page({ params }: PageProps) {
+  const { id } = await params;
+  return <TemplateDetailsPage id={id} />;
 }
