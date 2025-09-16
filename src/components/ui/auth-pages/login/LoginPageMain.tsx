@@ -44,7 +44,7 @@ export default function LoginPageMain() {
   return (
     <section className="">
       <div
-        className="justify-center items-center p-4 lg:p-14 shadow-md  rounded-xl w-full max-w-[600px] bg-white "
+        className="justify-center items-center p-4 lg:p-14 shadow-md  rounded-xl w-full  bg-white min-w-[600px]"
         style={{ width: "100%" }}
       >
         <div style={{ textAlign: "center", marginBottom: "40px" }}>
@@ -136,19 +136,8 @@ export default function LoginPageMain() {
             </Button>
           </Form.Item>
 
-          <div style={{ textAlign: "center", marginBottom: "24px" }}>
-            <Text style={{ color: "#6b7280" }}>
-              Don't have an account?{" "}
-              <Link
-                href="/auth/register"
-                style={{ color: "#1A5FA4", fontWeight: "500" }}
-              >
-                Create one now
-              </Link>
-            </Text>
-          </div>
           {/* social Login */}
-          <SocialLogin />
+          {/* <SocialLogin /> */}
         </Form>
       </div>
     </section>
