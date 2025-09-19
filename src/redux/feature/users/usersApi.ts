@@ -3,11 +3,11 @@ import { baseApi } from "@/redux/base/baseApi";
 const usersApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
     getUsers: build.query({
-      query: ({ role }) => ({
+      query: ({ role, page, limit }) => ({
         url: "/user",
         method: "GET",
         credentials: "include",
-        params: { role },
+        params: { role, page, limit },
       }),
     }),
     getSingleUser: build.query({

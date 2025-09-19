@@ -20,14 +20,18 @@ export default function UsersPageMain() {
   const [activeTab, setActiveTab] = useState<"CANDIDATE" | "EMPLOYEE">(
     "CANDIDATE"
   );
+  const [page, setPage] = useState(1);
   // console.log(activeTab);
   const { data: usersData, refetch } = useGetUsersQuery({
     role: activeTab,
+    page,
+    limit: 10,
   });
   // lock user
   const [lockUser] = useLockUserMutation();
   // console.log(usersData);
 
+  const paginationData = usersData?.pagination;
   const handleViewDetails = (user: any) => {
     setSelectedUser(user._id);
     setIsModalVisible(true);
@@ -194,9 +198,10 @@ export default function UsersPageMain() {
         rowClassName="hover:bg-gray-50"
         scroll={{ x: true }}
         pagination={{
-          pageSize: 9,
-          showSizeChanger: false,
-          hideOnSinglePage: true,
+          total: paginationData?.total,
+          pageSize: paginationData?.limit,
+          current: paginationData?.page,
+          onChange: (page) => setPage(page),
         }}
       />
       <UserDetailsModal

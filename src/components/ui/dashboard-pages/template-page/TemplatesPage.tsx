@@ -12,16 +12,23 @@ import DeleteModal from "@/components/shared/DeleteModal";
 import { toast } from "sonner";
 
 export default function TemplatesPage() {
+  const [page, setPage] = useState(1);
+
   const router = useRouter();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   // const [templates, setTemplates] = useState<Template[]>(mockTemplates);
-  const { data: templateData, refetch } = useGetTemplatesQuery(null);
+  const { data: templateData, refetch } = useGetTemplatesQuery({
+    page,
+    limit: 10,
+  });
   const [deleteTemplate] = useDeleteTemplateMutation();
   const templates = templateData?.data || [];
   const handleCreateTemplate = () => {
     router.push("/templates/create");
   };
+
+  const paginationData = templateData?.pagination;
 
   const handleDeleteTemplate = (id: string) => {
     setDeleteId(id);
@@ -53,6 +60,9 @@ export default function TemplatesPage() {
         templates={templates}
         onDelete={handleDeleteTemplate}
         onView={handleViewTemplate}
+        paginationData={paginationData}
+        setPage={setPage}
+        page={page}
       />
       <DeleteModal
         isOpen={deleteModalOpen}

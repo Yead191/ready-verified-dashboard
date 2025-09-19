@@ -25,12 +25,18 @@ interface TemplateTableProps {
   templates: Template[];
   onDelete: (id: string) => void;
   onView: (id: string) => void;
+  paginationData?: any;
+  setPage: (page: number) => void;
+  page: number;
 }
 
 export default function TemplateTable({
   templates,
   onDelete,
   onView,
+  paginationData,
+  setPage,
+  page,
 }: TemplateTableProps) {
   const columns: ColumnsType<Template> = [
     {
@@ -146,9 +152,10 @@ export default function TemplateTable({
       dataSource={templates}
       rowKey="_id"
       pagination={{
-        pageSize: 10,
-        showSizeChanger: true,
-        showQuickJumper: true,
+        total: paginationData?.total,
+        pageSize: paginationData?.limit,
+        current: paginationData?.page,
+        onChange: (page) => setPage(page),
         showTotal: (total, range) =>
           `${range[0]}-${range[1]} of ${total} templates`,
       }}

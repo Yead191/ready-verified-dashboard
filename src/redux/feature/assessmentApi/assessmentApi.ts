@@ -3,10 +3,11 @@ import { baseApi } from "@/redux/base/baseApi";
 const assessmentApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
     getAssessment: build.query({
-      query: () => ({
+      query: ({ page, limit }) => ({
         url: "/assessment",
         method: "GET",
         credentials: "include",
+        params: { page, limit },
       }),
       providesTags: ["assessment"],
     }),

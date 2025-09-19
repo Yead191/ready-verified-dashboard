@@ -2,37 +2,33 @@
 
 import React from "react";
 import { useState } from "react";
-import {
-  Table,
-  Button,
-  Tag,
-  Avatar,
-  Typography,
-  Space,
-  Card,
-  Select,
-} from "antd";
+import { Table, Button, Tag, Avatar, Typography, Space, Select } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
-import { useRouter } from "next/navigation";
-import { mockAssessment } from "@/data/assessment";
+
 import {
   useChangeStatusMutation,
   useGetAssessmentQuery,
 } from "@/redux/feature/assessmentApi/assessmentApi";
 import Link from "next/link";
-import PrimaryButton from "@/components/shared/PrimaryButton";
+
 import { imgUrl } from "@/app/(dashboard)/layout";
 import { toast } from "sonner";
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 const { Option } = Select;
 
 const AssessmentPage = () => {
+  const [page, setPage] = useState(1);
+
   // get assessment data
-  const { data: assessments, refetch } = useGetAssessmentQuery(null);
+  const { data: assessments, refetch } = useGetAssessmentQuery({
+    page,
+    limit: 10,
+  });
   const assessmentData = assessments?.data || [];
+  const paginationData = assessments?.pagination;
 
   //   handle change status
   const [changeStatus] = useChangeStatusMutation();
@@ -170,9 +166,10 @@ const AssessmentPage = () => {
         dataSource={assessmentData}
         rowKey={(record: any) => record._id}
         pagination={{
-          pageSize: 10,
-          showSizeChanger: true,
-          showQuickJumper: true,
+          total: paginationData?.total,
+          pageSize: paginationData?.limit,
+          current: paginationData?.page,
+          onChange: (page) => setPage(page),
           showTotal: (total: any, range: any) =>
             `${range[0]}-${range[1]} of ${total} items`,
         }}

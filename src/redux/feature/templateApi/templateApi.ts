@@ -3,10 +3,11 @@ import { baseApi } from "@/redux/base/baseApi";
 const templateApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getTemplates: builder.query({
-      query: () => ({
+      query: ({ page, limit }) => ({
         url: "/template",
         method: "GET",
         credentials: "include",
+        params: { page, limit },
       }),
       providesTags: ["Templates"],
       keepUnusedDataFor: 0,
