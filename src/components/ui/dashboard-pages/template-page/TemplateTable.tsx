@@ -7,7 +7,7 @@ import {
   FileWordOutlined,
 } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
-import { imgUrl } from "@/app/(dashboard)/layout";
+import { imgUrl } from "@/app/dashboard/layout";
 // import PdfThumbnail from "@/components/shared/PdfThumbnail";
 
 interface Template {

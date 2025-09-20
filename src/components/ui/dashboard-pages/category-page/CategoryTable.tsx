@@ -5,7 +5,7 @@ import { Table, Button, Space, Popconfirm, message } from "antd";
 import { EyeOutlined } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import { Category } from "@/data/assessment";
-import { imgUrl } from "@/app/(dashboard)/layout";
+import { imgUrl } from "@/app/dashboard/layout";
 import { Trash } from "lucide-react";
 import { useState } from "react";
 import DeleteModal from "@/components/shared/DeleteModal";

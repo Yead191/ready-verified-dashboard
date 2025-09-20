@@ -25,7 +25,7 @@ export default function TemplatesPage() {
   const [deleteTemplate] = useDeleteTemplateMutation();
   const templates = templateData?.data || [];
   const handleCreateTemplate = () => {
-    router.push("/templates/create");
+    router.push("/dashboard/templates/create");
   };
 
   const paginationData = templateData?.pagination;
@@ -37,7 +37,7 @@ export default function TemplatesPage() {
   };
   // console.log(deleteId);
   const handleViewTemplate = (id: string) => {
-    router.push(`/templates/${id}`);
+    router.push(`/dashboard/templates/${id}`);
   };
   const handleConfirmDelete = () => {
     toast.promise(deleteTemplate(deleteId!).unwrap(), {

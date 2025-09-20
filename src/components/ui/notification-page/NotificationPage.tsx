@@ -13,7 +13,7 @@ import { toast } from "sonner";
 import io from "socket.io-client";
 import { useGetProfileQuery } from "@/redux/feature/auth/authApi";
 import { useRouter } from "next/navigation";
-import { imgUrl } from "@/app/(dashboard)/layout";
+import { imgUrl } from "@/app/dashboard/layout";
 
 const { Title, Text } = Typography;
 
@@ -88,18 +88,18 @@ export default function NotificationsPage() {
       if (isSuccess) {
         // refetch();
         // console.log("clickd");
-        return router.push(`/assessment/${refernceId}`);
+        return router.push(`/dashboard/assessment/${refernceId}`);
       }
       isError && toast.error("Failed to mark as read.");
       return;
     }
-    if (path === "agent") {
-      readOneNotification(id);
-      refetch();
-      if (isSuccess) {
-        return router.push(`/representative-list/agent-profile/${refernceId}`);
-      }
-    }
+    // if (path === "agent") {
+    //   readOneNotification(id);
+    //   refetch();
+    //   if (isSuccess) {
+    //     return router.push(`/dashboard/representative-list/agent-profile/${refernceId}`);
+    //   }
+    // }
   };
 
   const handlePageChange = (newPage: number) => {

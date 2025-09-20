@@ -20,32 +20,32 @@ import { MdOutlineAssessment } from "react-icons/md";
 
 export const sidebarMenuItems = [
   {
-    key: "analytics",
+    key: "dashboard/analytics",
     icon: <ChartNoAxesCombined />,
     label: "Analytics",
   },
   {
-    key: "users",
+    key: "dashboard/users",
     icon: <Users />,
     label: "Users",
   },
   {
-    key: "subscription",
+    key: "dashboard/subscription",
     icon: <Crown />,
     label: "Subscription",
   },
   {
-    key: "assessment",
+    key: "dashboard/assessment",
     icon: <ClipboardCheck />,
     label: "Assessment",
   },
   {
-    key: "categories",
+    key: "dashboard/categories",
     icon: <Layers />,
     label: "Categories",
   },
   {
-    key: "templates",
+    key: "dashboard/templates",
     icon: <Layout />,
     label: "Templates",
   },
@@ -60,22 +60,22 @@ export const sidebarMenuItems = [
     label: "Settings",
     children: [
       {
-        key: "about",
+        key: "dashboard/about",
         icon: <Info />,
         label: "About Us",
       },
       {
-        key: "privacy-policy",
+        key: "dashboard/privacy-policy",
         icon: <Lock />,
         label: "Privacy Policy",
       },
       {
-        key: "terms-conditions",
+        key: "dashboard/terms-conditions",
         icon: <ShieldCheck />,
         label: "Terms & Conditions",
       },
       {
-        key: "faq",
+        key: "dashboard/faq",
         icon: <HelpCircle />,
         label: "FAQ",
       },

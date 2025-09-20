@@ -9,7 +9,7 @@ import {
   MinusCircleOutlined,
 } from "@ant-design/icons";
 import { Category } from "@/data/assessment";
-import { imgUrl } from "@/app/(dashboard)/layout";
+import { imgUrl } from "@/app/dashboard/layout";
 import { toast } from "sonner";
 import { useUpdateCategoryMutation } from "@/redux/feature/categoryApi/categoryApi";
 

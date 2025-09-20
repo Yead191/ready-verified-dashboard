@@ -11,7 +11,7 @@ import type { UploadFile, UploadProps } from "antd";
 import dayjs from "dayjs";
 import { useUpdateProfileMutation } from "@/redux/feature/auth/authApi";
 import { toast } from "sonner";
-import { imgUrl } from "@/app/(dashboard)/layout";
+import { imgUrl } from "@/app/dashboard/layout";
 
 interface FormDataState {
   name: string;

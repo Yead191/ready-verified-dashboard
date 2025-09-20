@@ -23,7 +23,7 @@ import ChangePasswordModal from "./ChangePasswordModal";
 import { BsPencilSquare } from "react-icons/bs";
 import { useGetProfileQuery } from "@/redux/feature/auth/authApi";
 import Spinner from "@/components/shared/spinner/Spinner";
-import { imgUrl } from "@/app/(dashboard)/layout";
+import { imgUrl } from "@/app/dashboard/layout";
 
 const { Title, Text } = Typography;
 

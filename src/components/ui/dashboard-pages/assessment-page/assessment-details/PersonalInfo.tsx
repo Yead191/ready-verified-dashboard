@@ -1,6 +1,6 @@
 import React from "react";
 import { Card, Descriptions, Space, Avatar } from "antd";
-import { imgUrl } from "@/app/(dashboard)/layout";
+import { imgUrl } from "@/app/dashboard/layout";
 
 interface Props {
   user: any;

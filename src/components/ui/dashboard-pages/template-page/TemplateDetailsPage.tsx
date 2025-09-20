@@ -23,7 +23,7 @@ import {
   useGetSingleTemplateQuery,
   useUpdateTemplateMutation,
 } from "@/redux/feature/templateApi/templateApi";
-import { imgUrl } from "@/app/(dashboard)/layout";
+import { imgUrl } from "@/app/dashboard/layout";
 import { toast } from "sonner";
 
 const { Title } = Typography;

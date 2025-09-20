@@ -14,12 +14,14 @@ import { sidebarMenuItems } from "../../../data/sidebarMenuItems";
 const { Sider } = Layout;
 
 export default function DashboardSidebar() {
-  const [selectedKey, setSelectedKey] = useState("analytics");
+  const [selectedKey, setSelectedKey] = useState("dashboard/analytics");
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
-    setSelectedKey(pathname.split("/")[1] || "analytics");
+    if (pathname) {
+      setSelectedKey(pathname.slice(1)); 
+    }
   }, [pathname]);
 
   const handleLogOut = () => {
@@ -44,7 +46,7 @@ export default function DashboardSidebar() {
     >
       <Sider width={280}>
         {/* Logo Section */}
-        <Link href={"/analytics"}>
+        <Link href={"/dashboard/analytics"}>
           <div className="flex items-center justify-center h-[84px]  bg-white mb-4 rounded-b-lg">
             <Image
               className="w-[57px] h-[60px] object-cover overflow-visible"

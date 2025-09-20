@@ -20,7 +20,7 @@ export default function CreateTemplateForm({
   loading,
 }: CreateTemplateFormProps) {
   const [form] = Form.useForm();
-
+  // upload props for file
   const uploadProps: UploadProps = {
     name: "file",
     multiple: false,
@@ -55,16 +55,57 @@ export default function CreateTemplateForm({
     },
   };
 
+  // upload props for thumbnail
+  const thumbnailProps: UploadProps = {
+    name: "thumbnail",
+    multiple: false,
+    accept: ".jpg,.jpeg,.png",
+    beforeUpload: (file) => {
+      const isValidType =
+        file.type === "image/jpeg" ||
+        file.type === "image/png" ||
+        file.type === "image/jpg";
+
+      if (!isValidType) {
+        message.error("You can only upload JPG, JPEG, or PNG images!");
+        return false;
+      }
+
+      const isLt5M = file.size / 1024 / 1024 < 5;
+      if (!isLt5M) {
+        message.error("Thumbnail must be smaller than 5MB!");
+        return false;
+      }
+
+      return false;
+    },
+    onChange: (info) => {
+      const { status } = info.file;
+      if (status === "done") {
+        message.success(`${info.file.name} thumbnail uploaded successfully.`);
+      } else if (status === "error") {
+        message.error(`${info.file.name} thumbnail upload failed.`);
+      }
+    },
+  };
+
   const handleFinish = (values: any) => {
     const fileList = form.getFieldValue("file");
     if (!fileList || fileList.length === 0) {
       message.error("Please upload a PDF file!");
       return;
     }
+    const thumbnailList = form.getFieldValue("thumbnail");
+    if (!thumbnailList || thumbnailList.length === 0) {
+      message.error("Please upload a thumbnail image!");
+      return;
+    }
 
+    console.log("img",  thumbnailList[0].originFileObj);
     const formData: FormData = {
       ...values,
       file: fileList[0].originFileObj,
+      image: thumbnailList[0].originFileObj,
     };
 
     onSubmit(formData);
@@ -83,35 +124,72 @@ export default function CreateTemplateForm({
         rules={[{ required: true, message: "Please select a template type!" }]}
       >
         <Select placeholder="Select Template Type" size="large">
-          <Option value="cv">CV</Option>
+          <Option value="cover-letter">CV</Option>
           <Option value="resume">Resume</Option>
         </Select>
       </Form.Item>
-
-      <Form.Item
-        name="file"
-        label="Upload File"
-        rules={[{ required: true, message: "Please upload a PDF file!" }]}
-        valuePropName="fileList"
-        getValueFromEvent={(e) => {
-          if (Array.isArray(e)) {
-            return e;
-          }
-          return e?.fileList;
-        }}
-      >
-        <Dragger {...uploadProps} className="!bg-gray-50">
-          <p className="ant-upload-drag-icon">
-            <InboxOutlined className="text-4xl text-blue-500" />
-          </p>
-          <p className="ant-upload-text text-lg font-medium">
-            Click to upload or drag and drop
-          </p>
-          <p className="ant-upload-hint text-gray-500">
-            Support for PDF files only. Maximum file size: 10MB
-          </p>
-        </Dragger>
-      </Form.Item>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full">
+        {/* file upload */}
+        <Form.Item
+          name="file"
+          label="Upload File"
+          rules={[{ required: true, message: "Please upload a PDF file!" }]}
+          valuePropName="fileList"
+          getValueFromEvent={(e) => {
+            if (Array.isArray(e)) {
+              return e;
+            }
+            return e?.fileList;
+          }}
+        >
+          <Dragger
+            {...uploadProps}
+            className="!bg-gray-50 !h-[200px]"
+            style={{ minHeight: 200 }}
+          >
+            <p className="ant-upload-drag-icon">
+              <InboxOutlined className="text-4xl text-blue-500" />
+            </p>
+            <p className="ant-upload-text text-lg font-medium">
+              Click to upload or drag and drop
+            </p>
+            <p className="ant-upload-hint text-gray-500">
+              Support for PDF files only. Maximum file size: 10MB
+            </p>
+          </Dragger>
+        </Form.Item>
+        {/* New Thumbnail Upload Section */}
+        <Form.Item
+          name="thumbnail"
+          label="Upload Thumbnail Image"
+          rules={[
+            { required: true, message: "Please upload a thumbnail image!" },
+          ]}
+          valuePropName="fileList"
+          getValueFromEvent={(e) => {
+            if (Array.isArray(e)) {
+              return e;
+            }
+            return e?.fileList;
+          }}
+        >
+          <Dragger
+            {...thumbnailProps}
+            className="!bg-gray-50 !h-[200px]"
+            style={{ minHeight: 200 }}
+          >
+            <p className="ant-upload-drag-icon">
+              <InboxOutlined className="text-4xl text-blue-500" />
+            </p>
+            <p className="ant-upload-text text-lg font-medium">
+              Click to upload or drag and drop
+            </p>
+            <p className="ant-upload-hint text-gray-500">
+              Support for JPG, JPEG, PNG images only. Maximum file size: 5MB
+            </p>
+          </Dragger>
+        </Form.Item>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* name */}
         <Form.Item

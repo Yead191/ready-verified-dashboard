@@ -27,7 +27,7 @@ export default function CreateTemplatePage() {
       toast.promise(addTemplate(formData).unwrap(), {
         loading: "Creating template...",
         success: (res) => {
-          router.push("/templates");
+          router.push("/dashboard/templates");
           return <b>{res.message}</b>;
         },
         error: (res) => `Error: ${res.data?.message || "Something went wrong"}`,
@@ -41,7 +41,7 @@ export default function CreateTemplatePage() {
   };
 
   const handleCancel = () => {
-    router.push("/templates");
+    router.push("/dashboard/templates");
   };
 
   return (

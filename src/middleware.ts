@@ -1,40 +1,46 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-
+const allowedPaths = ["/auth/login",'/auth/forgot-password','/auth/reset-password','/auth/verify-otp','/auth/verify-otp'];
+const privateRoutes = ["/analytics","/assessment","/users",'/profile','/templates','/notifications',];
 export const middleware = async (request: NextRequest) => {
-  const protectedRoutes = [
-    "/",
-    "/about-us",
-    "/privacy-policy",
-    "/terms-conditions",
-    "/faq",
-    "/notifications",
-    "/analytics",
-    "/users",
-    "/subscription",
-    "/assessment",
-    "/assessment/:path*",
-    "/categories",
-    "/templates",
-    "/earnings",
-  ];
-  const notProtectedRoutes = ["/auth/login"];
-  const additionalConditions = [
-    request.nextUrl.pathname.startsWith("/assessment"),
-  ];
-  const pathname = request.nextUrl.pathname;
-  const token = (await cookies()).get("accessToken")?.value;
 
-  if (
-    (!token && protectedRoutes.includes(pathname)) ||
-    (additionalConditions.includes(true) && !token)
-  ) {
-    return NextResponse.redirect(new URL("/auth/login", request.url));
+  const userToken = (await cookies()).get("accessToken")?.value;
+  
+  const pathname = request.nextUrl.pathname;
+  // console.log(pathname);
+  
+  if(!userToken && !allowedPaths.includes(pathname)){
+    return NextResponse.redirect(new URL('/auth/login',request.url))
+  }
+  // console.log(userToken);
+  
+
+  const userFromServer = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/profile`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${userToken}`
+    },
+    cache:"no-store"
+  });
+
+  const user = (await userFromServer.json())?.data;
+
+  if (!allowedPaths.includes(request.nextUrl.pathname) && !user) {
+    return NextResponse.redirect(new URL('/auth/login',request.url))
+  }
+  
+
+  if(pathname.startsWith("/dashboard" )&&!privateRoutes.includes(pathname) && !["SUPER_ADMIN","ADMIN"].includes(user?.role)){
+    return NextResponse.redirect(new URL('/auth/login',request.url))
+   
   }
 
   return NextResponse.next();
+  
+ 
 };
 
 export const config = {
-  matcher: ["/:path*"],
+  matcher: ["/dashboard/:path*","/auth/:path*"],
 };

@@ -5,7 +5,7 @@ import { BellOutlined } from "@ant-design/icons";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useGetProfileQuery } from "@/redux/feature/auth/authApi";
-import { imgUrl } from "@/app/(dashboard)/layout";
+import { imgUrl } from "@/app/dashboard/layout";
 import { useGetNotificationQuery } from "@/redux/feature/notification/notificationApi";
 import { io } from "socket.io-client";
 
@@ -72,7 +72,7 @@ export default function DashboardHeader() {
         {formatPathName(targetSlug)}
       </Title>
       <Space style={{ gap: "30px" }} size="middle">
-        <Link href={"/notifications"}>
+        <Link href={"/dashboard/notifications"}>
           <Badge
             size="small"
             style={{
@@ -93,7 +93,7 @@ export default function DashboardHeader() {
             />
           </Badge>
         </Link>
-        <Link href={"/profile"} className="flex items-center gap-2">
+        <Link href={"/dashboard/profile"} className="flex items-center gap-2">
           {isLoading ? (
             <div className="w-6 h-6 border-2 border-gray-300 border-t-black rounded-full animate-spin"></div>
           ) : (

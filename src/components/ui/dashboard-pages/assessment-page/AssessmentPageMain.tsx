@@ -13,7 +13,7 @@ import {
 } from "@/redux/feature/assessmentApi/assessmentApi";
 import Link from "next/link";
 
-import { imgUrl } from "@/app/(dashboard)/layout";
+import { imgUrl } from "@/app/dashboard/layout";
 import { toast } from "sonner";
 
 const { Text } = Typography;
@@ -148,7 +148,7 @@ const AssessmentPage = () => {
       width: 80,
       align: "center" as any,
       render: (_: any, record: any) => (
-        <Link href={`/assessment/${record._id}`}>
+        <Link href={`/dashboard/assessment/${record._id}`}>
           <Button
             type="text"
             icon={<InfoCircleOutlined />}

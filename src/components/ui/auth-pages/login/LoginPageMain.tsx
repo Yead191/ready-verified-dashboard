@@ -35,7 +35,7 @@ export default function LoginPageMain() {
         // console.log(res);
         Cookies.set("accessToken", res?.data || "");
         localStorage.removeItem("resetToken");
-        router.push("/analytics");
+        router.push("/dashboard/analytics");
         return <b>{res.message}</b>;
       },
       error: (res) => `Error: ${res.data?.message || "Something went wrong"}`,

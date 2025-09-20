@@ -3,7 +3,7 @@
 import { Modal, Spin } from "antd";
 import { useGetSingleUserQuery } from "@/redux/feature/users/usersApi";
 import { Mail, Phone, Briefcase, Linkedin, Languages } from "lucide-react";
-import { imgUrl } from "@/app/(dashboard)/layout";
+import { imgUrl } from "@/app/dashboard/layout";
 
 interface UserDetailsModalProps {
   userId: any | null;

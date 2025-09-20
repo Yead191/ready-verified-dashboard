@@ -10,7 +10,7 @@ import {
   useGetUsersQuery,
   useLockUserMutation,
 } from "@/redux/feature/users/usersApi";
-import { imgUrl } from "@/app/(dashboard)/layout";
+import { imgUrl } from "@/app/dashboard/layout";
 
 // Define the User interface
 
