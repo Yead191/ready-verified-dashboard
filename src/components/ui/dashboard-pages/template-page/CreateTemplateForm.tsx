@@ -1,8 +1,18 @@
 "use client";
 
-import { Form, Input, Select, Upload, Button, Space, message } from "antd";
-import { InboxOutlined } from "@ant-design/icons";
+import {
+  Form,
+  Input,
+  Select,
+  Upload,
+  Button,
+  Space,
+  message,
+  Switch,
+} from "antd";
+import { InboxOutlined, PlusOutlined } from "@ant-design/icons";
 import type { UploadProps } from "antd";
+import { useState } from "react";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -20,6 +30,8 @@ export default function CreateTemplateForm({
   loading,
 }: CreateTemplateFormProps) {
   const [form] = Form.useForm();
+  const [features, setFeatures] = useState<string[]>([]);
+
   // upload props for file
   const uploadProps: UploadProps = {
     name: "file",
@@ -44,14 +56,6 @@ export default function CreateTemplateForm({
       }
 
       return false; // Prevent auto upload
-    },
-    onChange: (info) => {
-      const { status } = info.file;
-      if (status === "done") {
-        message.success(`${info.file.name} file uploaded successfully.`);
-      } else if (status === "error") {
-        message.error(`${info.file.name} file upload failed.`);
-      }
     },
   };
 
@@ -79,14 +83,6 @@ export default function CreateTemplateForm({
 
       return false;
     },
-    onChange: (info) => {
-      const { status } = info.file;
-      if (status === "done") {
-        message.success(`${info.file.name} thumbnail uploaded successfully.`);
-      } else if (status === "error") {
-        message.error(`${info.file.name} thumbnail upload failed.`);
-      }
-    },
   };
 
   const handleFinish = (values: any) => {
@@ -101,14 +97,22 @@ export default function CreateTemplateForm({
       return;
     }
 
-    console.log("img",  thumbnailList[0].originFileObj);
     const formData: FormData = {
       ...values,
+      features: features,
       file: fileList[0].originFileObj,
       image: thumbnailList[0].originFileObj,
     };
-
+    console.log(values);
     onSubmit(formData);
+  };
+
+  const addFeature = () => {
+    const value = form.getFieldValue("newFeature");
+    if (value) {
+      setFeatures([...features, value]);
+      form.resetFields(["newFeature"]);
+    }
   };
 
   return (
@@ -128,6 +132,7 @@ export default function CreateTemplateForm({
           <Option value="resume">Resume</Option>
         </Select>
       </Form.Item>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full">
         {/* file upload */}
         <Form.Item
@@ -135,18 +140,9 @@ export default function CreateTemplateForm({
           label="Upload File"
           rules={[{ required: true, message: "Please upload a PDF file!" }]}
           valuePropName="fileList"
-          getValueFromEvent={(e) => {
-            if (Array.isArray(e)) {
-              return e;
-            }
-            return e?.fileList;
-          }}
+          getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
         >
-          <Dragger
-            {...uploadProps}
-            className="!bg-gray-50 !h-[200px]"
-            style={{ minHeight: 200 }}
-          >
+          <Dragger {...uploadProps} className="!bg-gray-50 !h-[200px]">
             <p className="ant-upload-drag-icon">
               <InboxOutlined className="text-4xl text-blue-500" />
             </p>
@@ -154,30 +150,20 @@ export default function CreateTemplateForm({
               Click to upload or drag and drop
             </p>
             <p className="ant-upload-hint text-gray-500">
-              Support for PDF files only. Maximum file size: 10MB
+              Support for PDF files only. Max size: 10MB
             </p>
           </Dragger>
         </Form.Item>
-        {/* New Thumbnail Upload Section */}
+
+        {/* thumbnail upload */}
         <Form.Item
           name="thumbnail"
           label="Upload Thumbnail Image"
-          rules={[
-            { required: true, message: "Please upload a thumbnail image!" },
-          ]}
+          rules={[{ required: true, message: "Please upload a thumbnail!" }]}
           valuePropName="fileList"
-          getValueFromEvent={(e) => {
-            if (Array.isArray(e)) {
-              return e;
-            }
-            return e?.fileList;
-          }}
+          getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
         >
-          <Dragger
-            {...thumbnailProps}
-            className="!bg-gray-50 !h-[200px]"
-            style={{ minHeight: 200 }}
-          >
+          <Dragger {...thumbnailProps} className="!bg-gray-50 !h-[200px]">
             <p className="ant-upload-drag-icon">
               <InboxOutlined className="text-4xl text-blue-500" />
             </p>
@@ -185,45 +171,83 @@ export default function CreateTemplateForm({
               Click to upload or drag and drop
             </p>
             <p className="ant-upload-hint text-gray-500">
-              Support for JPG, JPEG, PNG images only. Maximum file size: 5MB
+              Support for JPG, JPEG, PNG only. Max size: 5MB
             </p>
           </Dragger>
         </Form.Item>
       </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* name */}
         <Form.Item
           name="title"
           label="Enter Template Title"
-          rules={[
-            { required: true, message: "Please enter template title!" },
-            {
-              min: 3,
-              message: "Template title must be at least 3 characters!",
-            },
-          ]}
+          rules={[{ required: true, message: "Please enter template title!" }]}
         >
           <Input placeholder="Enter Template title" size="large" />
         </Form.Item>
-        {/* price */}
+
         <Form.Item
           name="price"
           label="Enter Template Price"
           rules={[{ required: true, message: "Please enter template price!" }]}
         >
-          <Input type="number" placeholder="Enter Template Name" size="large" />
+          <Input
+            type="number"
+            placeholder="Enter Template Price"
+            size="large"
+          />
         </Form.Item>
       </div>
 
+      {/* description */}
       <Form.Item name="description" label="Description (Optional)">
-        <TextArea
-          rows={4}
-          placeholder="Enter template description..."
-          maxLength={500}
-          showCount
-        />
+        <TextArea rows={4} placeholder="Enter template description..." />
       </Form.Item>
 
+      {/* status */}
+      <Form.Item
+        name="status"
+        label="Status"
+        rules={[{ required: true, message: "Please select a status!" }]}
+      >
+        <Select placeholder="Select Status" size="large">
+          <Option value="active">Active</Option>
+          <Option value="inactive">Inactive</Option>
+        </Select>
+      </Form.Item>
+
+      {/* isPremium */}
+      <Form.Item
+        name="isPremium"
+        label="Premium Template"
+        valuePropName="checked"
+      >
+        <Switch />
+      </Form.Item>
+
+      {/* tags */}
+      <Form.Item name="tags" label="Tags">
+        <Select mode="tags" style={{ width: "100%" }} placeholder="Add tags" />
+      </Form.Item>
+
+      {/* features */}
+      <Form.Item label="Features">
+        <Space.Compact style={{ width: "100%" }}>
+          <Form.Item name="newFeature" noStyle>
+            <Input placeholder="Enter a feature" />
+          </Form.Item>
+          <Button type="primary" icon={<PlusOutlined />} onClick={addFeature}>
+            Add
+          </Button>
+        </Space.Compact>
+        <ul className="mt-2 list-disc pl-5">
+          {features.map((f, i) => (
+            <li key={i}>{f}</li>
+          ))}
+        </ul>
+      </Form.Item>
+
+      {/* buttons */}
       <Form.Item className="!mb-0">
         <Space className="w-full justify-end">
           <Button size="large" onClick={onCancel}>

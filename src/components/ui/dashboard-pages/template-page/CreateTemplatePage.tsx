@@ -23,6 +23,15 @@ export default function CreateTemplatePage() {
       formData.append("price", values.price);
       formData.append("type", values.type);
       formData.append("description", values.description);
+      formData.append("status", values.status);
+      formData.append("image", values.image);
+
+      for (let f of values.features) {
+        formData.append("features", f);
+      }
+      for (let f of values.tags) {
+        formData.append("tags", f);
+      }
       // Simulate API call
       toast.promise(addTemplate(formData).unwrap(), {
         loading: "Creating template...",

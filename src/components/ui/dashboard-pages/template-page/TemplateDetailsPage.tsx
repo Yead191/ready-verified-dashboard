@@ -74,6 +74,14 @@ export default function TemplateDetailsPage({ id }: { id: string }) {
       formData.append("type", values.type);
       formData.append("description", values.description);
       formData.append("status", values.status);
+      formData.append("image", values.image);
+
+      for (let f of values.features) {
+        formData.append("features", f);
+      }
+      for (let f of values.tags) {
+        formData.append("tags", f);
+      }
       toast.promise(updateTemplate({ id, data: formData }).unwrap(), {
         loading: "Updating template...",
         success: (res) => {
