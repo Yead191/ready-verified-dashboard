@@ -117,7 +117,7 @@ export default function EditTemplateForm({
         fileList && fileList.length > 0
           ? fileList[0].originFileObj || template.file
           : template.file,
-      thumbnail:
+      image:
         thumbnailList && thumbnailList.length > 0
           ? thumbnailList[0].originFileObj || template.thumbnail
           : template.thumbnail,
@@ -136,7 +136,7 @@ export default function EditTemplateForm({
 
   return (
     <Form
-    style={{maxHeight: "70vh", overflowY: "auto"}}
+      style={{ maxHeight: "70vh", overflowY: "auto" }}
       form={form}
       layout="vertical"
       onFinish={handleFinish}
