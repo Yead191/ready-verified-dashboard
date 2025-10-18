@@ -160,7 +160,6 @@ const SubscriptionPage: React.FC = () => {
                   paymentType={plan.recurring}
                   packageOffer={plan.features}
                   onEdit={() => handleEditSubscription(plan!)}
-                  
                 />
               ))}
             </div>
