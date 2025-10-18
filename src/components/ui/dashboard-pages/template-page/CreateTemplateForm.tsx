@@ -127,9 +127,32 @@ export default function CreateTemplateForm({
         label="Select Template Type"
         rules={[{ required: true, message: "Please select a template type!" }]}
       >
+        {/* 
+        Resume = 'resume',
+  CoverLetter = 'cover-letter',
+  EducationalMaterial = 'educational-material',
+  CheatSheet = 'cheat-sheet',
+  QuickLesson = 'quick-lesson',
+  HowToGuide = 'how-to-guide',
+  Certificate = 'certificate',
+  DigitalBadge = 'digital-badge',
+  BusinessCard = 'business-card',
+  Merchandise = 'merchandise',
+  JobSeekerSubscription = 'jobseeker-subscription',
+  EmployerSubscription = 'employer-subscription'
+        */}
         <Select placeholder="Select Template Type" size="large">
           <Option value="cover-letter">CV</Option>
           <Option value="resume">Resume</Option>
+          <Option value="educational-material">Educational Material</Option>
+          <Option value="cheat-sheet">Cheat Sheet</Option>
+          <Option value="quick-lesson">QuickLesson</Option>
+          <Option value="how-to-guide">HowToGuide</Option>
+          <Option value="certificate">Certificate</Option>
+          <Option value="digital-badge">Digital Badge</Option>
+          <Option value="business-card">Business Card</Option> 
+          <Option value="merchandise">Merchandise</Option> 
+
         </Select>
       </Form.Item>
 
