@@ -21,6 +21,7 @@ export const baseApi = createApi({
     "Templates",
     "assessment",
     "Subscription",
+    "faq",
   ],
   endpoints: () => ({}),
 });

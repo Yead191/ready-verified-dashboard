@@ -1,8 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { Layout, Typography, Button, Space, Form, Tooltip } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import {
+  Layout,
+  Typography,
+  Button,
+  Space,
+  Form,
+  Tooltip,
+  Tabs,
+  ConfigProvider,
+} from "antd";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { BsPencilSquare } from "react-icons/bs";
 import { toast } from "sonner";
@@ -15,30 +23,40 @@ import {
   useUpdateFaqMutation,
 } from "@/redux/feature/support-page/SupportPageApi";
 import PrimaryButton from "@/components/shared/PrimaryButton";
+import { useRouter } from "next/navigation";
 
 const { Content } = Layout;
 const { Title, Paragraph } = Typography;
+const { TabPane } = Tabs;
 
 interface FAQItem {
   _id?: string;
   question: string;
   answer: string;
   selected?: boolean;
+  type?: "jobSeeker" | "employer";
 }
 
 export default function FAQPage() {
   // GET FAQ
-  const { data: faqData, refetch } = useGetFaqContentQuery(null);
+  const { data: jobSeekerFAQs } = useGetFaqContentQuery({ type: "candidate" });
+  const { data: employerFAQs, refetch } = useGetFaqContentQuery({
+    type: "employee",
+  });
   // add faq
   const [addFaq] = useAddFaqMutation();
-  //update faq
+  // update faq
   const [updateFaq] = useUpdateFaqMutation();
   // delete faq
   const [deleteFaq] = useDeleteFaqMutation();
+  const router = useRouter();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [editingItem, setEditingItem] = useState<FAQItem | null>(null);
   const [deletingItem, setDeletingItem] = useState<FAQItem | null>(null);
+  const [activeTab, setActiveTab] = useState<"candidate" | "employee">(
+    "candidate"
+  );
   const [form] = Form.useForm();
 
   const handleAddContent = () => {
@@ -62,7 +80,6 @@ export default function FAQPage() {
   };
 
   const confirmDelete = () => {
-    // console.log(deletingItem);
     if (deletingItem) {
       toast.promise(deleteFaq({ id: deletingItem._id }).unwrap(), {
         loading: "Deleting FAQ item...",
@@ -80,15 +97,15 @@ export default function FAQPage() {
 
   const handleModalOk = () => {
     form.validateFields().then((values) => {
+      const faqData = {
+        question: values.question,
+        answer: values.answer,
+        type: activeTab,
+      };
+
       if (editingItem) {
-        // Edit existing item
-        // console.log(editingItem);
-        const updateItem = {
-          question: values.question,
-          answer: values.answer,
-        };
         toast.promise(
-          updateFaq({ id: editingItem._id, data: updateItem }).unwrap(),
+          updateFaq({ id: editingItem._id, data: faqData }).unwrap(),
           {
             loading: "Updating FAQ item...",
             success: (res) => {
@@ -102,13 +119,9 @@ export default function FAQPage() {
               `Error: ${err?.data?.message || "Something went wrong"}`,
           }
         );
+        return;
       } else {
-        // Add new item
-        const newItem: FAQItem = {
-          question: values.question,
-          answer: values.answer,
-        };
-        toast.promise(addFaq({ data: newItem }).unwrap(), {
+        toast.promise(addFaq({ data: faqData }).unwrap(), {
           loading: "Adding FAQ item...",
           success: (res) => {
             refetch();
@@ -129,7 +142,7 @@ export default function FAQPage() {
     setEditingItem(null);
   };
 
-  const renderFAQItem = (item: any) => (
+  const renderFAQItem = (item: FAQItem) => (
     <div key={item._id} style={{ marginBottom: 16 }}>
       <div
         style={{
@@ -211,6 +224,7 @@ export default function FAQPage() {
       }}
     >
       <Content style={{ padding: "16px", paddingBottom: 32 }}>
+        {/* Header */}
         <div
           style={{
             display: "flex",
@@ -222,20 +236,56 @@ export default function FAQPage() {
             handleEvent={handleAddContent}
             size="large"
             text="Add FAQ"
-          ></PrimaryButton>
-        </div>
-        <div
-          style={{
-            height: "70vh",
-            overflowY: "auto",
-            paddingBottom: "24px",
-            marginTop: 10,
-          }}
-        >
-          {faqData?.data?.map(renderFAQItem)}
+          />
         </div>
 
-        {/* Custom Add/Edit Modal */}
+        {/* Tabs */}
+        <ConfigProvider
+          theme={{
+            components: {
+              Tabs: {
+                titleFontSize: 16,
+              },
+            },
+          }}
+        >
+          <Tabs
+            activeKey={activeTab}
+            onChange={(key) => {
+              setActiveTab(key as "candidate" | "employee");
+              router.replace(`?tab=${key}`);
+            }}
+            style={{ marginTop: 16 }}
+          >
+            <TabPane tab="Job Seekers" key="candidate">
+              <div
+                className="h-[calc(100vh-320px)] overflow-auto 
+              "
+              >
+                {jobSeekerFAQs?.data?.length > 0 ? (
+                  jobSeekerFAQs?.data?.map(renderFAQItem)
+                ) : (
+                  <p className="text-center text-gray-400 mt-8">
+                    No FAQ available for Job Seekers.
+                  </p>
+                )}
+              </div>
+            </TabPane>
+            <TabPane tab="Employers" key="employee">
+              <div className="h-[calc(100vh-320px)] overflow-auto">
+                {employerFAQs?.data?.length > 0 ? (
+                  employerFAQs?.data?.map(renderFAQItem)
+                ) : (
+                  <p className="text-center text-gray-400 mt-8">
+                    No FAQ available for Employers.
+                  </p>
+                )}
+              </div>
+            </TabPane>
+          </Tabs>
+        </ConfigProvider>
+
+        {/* Add/Edit Modal */}
         <FaqModal
           isModalVisible={isModalVisible}
           handleModalCancel={handleModalCancel}
@@ -243,7 +293,8 @@ export default function FAQPage() {
           form={form}
           editingItem={editingItem}
         />
-        {/* Custom Delete Confirmation Modal */}
+
+        {/* Delete Modal */}
         <DeleteModal
           isDeleteModalVisible={isDeleteModalVisible}
           setIsDeleteModalVisible={setIsDeleteModalVisible}

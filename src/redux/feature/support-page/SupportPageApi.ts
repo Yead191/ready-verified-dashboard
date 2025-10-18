@@ -21,11 +21,13 @@ const supportApi = baseApi.injectEndpoints({
     }),
     // get faq page
     getFaqContent: build.query({
-      query: () => ({
+      query: ({ type }) => ({
         url: `/faq`,
         method: "GET",
         credentials: "include",
+        params: { type },
       }),
+      providesTags: ["faq"],
     }),
     // add faq
     addFaq: build.mutation({
@@ -34,6 +36,7 @@ const supportApi = baseApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["faq"],
     }),
     // update faq
     updateFaq: build.mutation({
@@ -45,6 +48,7 @@ const supportApi = baseApi.injectEndpoints({
           body: data,
         };
       },
+      invalidatesTags: ["faq"],
     }),
     // delete faq
     deleteFaq: build.mutation({
@@ -52,6 +56,7 @@ const supportApi = baseApi.injectEndpoints({
         url: `/faq/${id}`,
         method: "DELETE",
       }),
+      invalidatesTags: ["faq"],
     }),
   }),
 });
