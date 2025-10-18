@@ -56,7 +56,7 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
           </button>
         </div>
         <div className="mt-2 flex items-baseline">
-          <span className="text-2xl font-bold text-blue-600">€{amount}</span>
+          <span className="text-2xl font-bold text-blue-600">${amount}</span>
           <span className="text-sm text-gray-500 ml-1">/{paymentType}</span>
         </div>
       </div>

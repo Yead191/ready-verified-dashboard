@@ -17,6 +17,7 @@ interface SubscriptionModalProps {
   onSubmit: any;
   initialData?: any | null;
   mode: "add" | "edit";
+  activeTab: "candidate" | "employee";
 }
 
 const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
@@ -25,6 +26,7 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
   onSubmit,
   initialData,
   mode,
+  activeTab,
 }) => {
   const [form] = Form.useForm();
 
@@ -70,11 +72,19 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
           name="name"
           rules={[{ required: true, message: "Please select package name" }]}
         >
-          <Select placeholder="Select Package Name" size="large">
-            <Option value="Free">Free</Option>
-            <Option value="Basic Package">Basic Package</Option>
-            <Option value="Premium Package">Premium Package</Option>
-          </Select>
+          {activeTab === "candidate" ? (
+            <Select placeholder="Select Package Name" size="large">
+              <Option value="Free">Free</Option>
+              <Option value="Plus">Plus</Option>
+              <Option value="Pro">Pro</Option>
+            </Select>
+          ) : (
+            <Select placeholder="Select Package Name" size="large">
+              <Option value="trial">Trial</Option>
+              <Option value="core">Core</Option>
+              <Option value="growth">Growth</Option>
+            </Select>
+          )}
         </Form.Item>
 
         <Form.Item

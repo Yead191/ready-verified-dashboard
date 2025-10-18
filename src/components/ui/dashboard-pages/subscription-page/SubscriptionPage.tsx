@@ -2,7 +2,7 @@
 
 import type React from "react";
 import { useState } from "react";
-import { Typography, Button, message } from "antd";
+import { Typography, Button, Tabs, ConfigProvider } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import SubscriptionCard from "./SubscriptionCard";
 import SubscriptionModal from "./SubscriptionModal";
@@ -12,24 +12,44 @@ import {
   useUpdateSubscriptionMutation,
 } from "@/redux/feature/subscriptionApi/subscriptionApi";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const { Title } = Typography;
+const { TabPane } = Tabs;
 
 const SubscriptionPage: React.FC = () => {
+  const router = useRouter();
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMode, setModalMode] = useState<"add" | "edit">("add");
-  const [editingSubscription, setEditingSubscription] = useState(null);
-  const [editId, setEditId] = useState(null);
+  const [editingSubscription, setEditingSubscription] = useState<any>(null);
+  const [editId, setEditId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<"candidate" | "employee">(
+    "candidate"
+  );
+
   // get subscription
-  const { data: subscription, refetch } = useGetSubscriptionQuery(null, {
-    refetchOnMountOrArgChange: true,
-  });
+  // employer plans
+  const { data: employerPlans, refetch: refetchEmployer } =
+    useGetSubscriptionQuery(
+      { type: "employee" },
+      {
+        refetchOnMountOrArgChange: true,
+      }
+    );
+
+  // job seeker plans
+  const { data: jobSeekerPlans, refetch } = useGetSubscriptionQuery(
+    { type: "candidate" },
+    {
+      refetchOnMountOrArgChange: true,
+    }
+  );
+
   // add subscription
   const [addSubscription] = useAddSubscriptionMutation();
-  //update subscription
+  // update subscription
   const [updateSubscription] = useUpdateSubscriptionMutation();
 
-  const subscriptionPlans = subscription?.data || [];
   const handleAddSubscription = () => {
     setModalMode("add");
     setEditingSubscription(null);
@@ -44,29 +64,33 @@ const SubscriptionPage: React.FC = () => {
   };
 
   const handleModalSubmit = (values: any) => {
+    const subscriptionValue = {
+      ...values,
+      price: Number(values.price),
+      type: activeTab,
+    };
+
     if (modalMode === "add") {
-      console.log(values);
-      const subscriptionValue = { ...values, price: Number(values.price) };
-      // console.log(subscriptionValue);
       toast.promise(addSubscription(subscriptionValue).unwrap(), {
         loading: "Adding subscription...",
         success: (res) => {
           refetch();
+          refetchEmployer();
           return <b>{res.message}</b>;
         },
         error: (res) => `Error: ${res.data?.message || "Something went wrong"}`,
       });
     } else if (modalMode === "edit" && editingSubscription) {
-      // console.log(editingSubscription._id);
       toast.promise(
         updateSubscription({
           id: editId,
-          data: values,
+          data: subscriptionValue,
         }).unwrap(),
         {
           loading: "Updating subscription...",
           success: (res) => {
             refetch();
+            refetchEmployer();
             return <b>{res.message}</b>;
           },
           error: (res) =>
@@ -74,6 +98,7 @@ const SubscriptionPage: React.FC = () => {
         }
       );
     }
+
     setModalVisible(false);
     setEditingSubscription(null);
   };
@@ -86,14 +111,7 @@ const SubscriptionPage: React.FC = () => {
   return (
     <div>
       {/* Header */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 32,
-        }}
-      >
+      <div className="flex justify-between items-center mb-8">
         <Title level={2} style={{ margin: 0, color: "#262626" }}>
           Subscription Plans
         </Title>
@@ -113,22 +131,59 @@ const SubscriptionPage: React.FC = () => {
         </Button>
       </div>
 
-      {/* Subscription Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full">
-        {subscriptionPlans.map((plan: any) => (
-          <div key={plan._id}>
-            <SubscriptionCard
-              refetch={refetch}
-              planId={plan._id}
-              packageName={plan.name}
-              amount={plan.price}
-              paymentType={plan.recurring}
-              packageOffer={plan.features}
-              onEdit={() => handleEditSubscription(plan!)}
-            />
-          </div>
-        ))}
-      </div>
+      {/* Tabs for Job Seekers & Employers */}
+      <ConfigProvider
+        theme={{
+          components: {
+            Tabs: {
+              titleFontSize: 16,
+            },
+          },
+        }}
+      >
+        <Tabs
+          activeKey={activeTab}
+          onChange={(key) => {
+            setActiveTab(key as "candidate" | "employee");
+            router.replace(`?tab=${key}`);
+          }}
+        >
+          <TabPane tab="Job Seekers" key="candidate">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full">
+              {jobSeekerPlans?.data?.map((plan: any) => (
+                <SubscriptionCard
+                  key={plan._id}
+                  refetch={refetch}
+                  planId={plan._id}
+                  packageName={plan.name}
+                  amount={plan.price}
+                  paymentType={plan.recurring}
+                  packageOffer={plan.features}
+                  onEdit={() => handleEditSubscription(plan!)}
+                  
+                />
+              ))}
+            </div>
+          </TabPane>
+
+          <TabPane tab="Employers" key="employee">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full">
+              {employerPlans?.data?.map((plan: any) => (
+                <SubscriptionCard
+                  key={plan._id}
+                  refetch={refetch}
+                  planId={plan._id}
+                  packageName={plan.name}
+                  amount={plan.price}
+                  paymentType={plan.recurring}
+                  packageOffer={plan.features}
+                  onEdit={() => handleEditSubscription(plan!)}
+                />
+              ))}
+            </div>
+          </TabPane>
+        </Tabs>
+      </ConfigProvider>
 
       {/* Modal */}
       <SubscriptionModal
@@ -137,6 +192,7 @@ const SubscriptionPage: React.FC = () => {
         onSubmit={handleModalSubmit}
         initialData={editingSubscription}
         mode={modalMode}
+        activeTab={activeTab}
       />
     </div>
   );
